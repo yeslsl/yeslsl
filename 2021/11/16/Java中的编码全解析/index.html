@@ -1,0 +1,2405 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java中的编码全解析 | Never</title><meta name="author" content="Never"><meta name="copyright" content="Never"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1. 为什么要编码？2. 什么是编码？说到编码， 就不得不说unicode编码， 这个跟utf-8， utf-16等还不是一个概念， 可以理解为接口与实现的关系。 3. 编码的表示及分类 ASCII编码， 7位二进制码， 共可以表示128个字符，加粗的0-31和127是控制字符，32-126是可显示字符    二进制 十进制 十六进制 字符&#x2F;缩写 解释    00000000 0 00">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java中的编码全解析">
+<meta property="og:url" content="https://qota.top/2021/11/16/Java%E4%B8%AD%E7%9A%84%E7%BC%96%E7%A0%81%E5%85%A8%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="Never">
+<meta property="og:description" content="1. 为什么要编码？2. 什么是编码？说到编码， 就不得不说unicode编码， 这个跟utf-8， utf-16等还不是一个概念， 可以理解为接口与实现的关系。 3. 编码的表示及分类 ASCII编码， 7位二进制码， 共可以表示128个字符，加粗的0-31和127是控制字符，32-126是可显示字符    二进制 十进制 十六进制 字符&#x2F;缩写 解释    00000000 0 00">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://pic.zenvia.top/picgo/blog_avatar.png">
+<meta property="article:published_time" content="2021-11-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-07-25T04:55:11.638Z">
+<meta property="article:author" content="Never">
+<meta property="article:tag" content="博客 Java 编码 UTF8 万国码 UTF16 UTF32">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.zenvia.top/picgo/blog_avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qota.top/2021/11/16/Java%E4%B8%AD%E7%9A%84%E7%BC%96%E7%A0%81%E5%85%A8%E8%A7%A3%E6%9E%90/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java中的编码全解析',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-07-25 12:55:11'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Never"><span class="site-name">Never</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Java中的编码全解析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-11-15T16:00:00.000Z" title="Created 2021-11-16 00:00:00">2021-11-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-07-25T04:55:11.638Z" title="Updated 2023-07-25 12:55:11">2023-07-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Java中的编码全解析"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="1-为什么要编码？"><a href="#1-为什么要编码？" class="headerlink" title="1. 为什么要编码？"></a>1. 为什么要编码？</h2><h2 id="2-什么是编码？"><a href="#2-什么是编码？" class="headerlink" title="2. 什么是编码？"></a>2. 什么是编码？</h2><p>说到编码， 就不得不说unicode编码， 这个跟utf-8， utf-16等还不是一个概念， 可以理解为接口与实现的关系。</p>
+<h2 id="3-编码的表示及分类"><a href="#3-编码的表示及分类" class="headerlink" title="3. 编码的表示及分类"></a>3. 编码的表示及分类</h2><ol>
+<li><p>ASCII编码， 7位二进制码， 共可以表示128个字符，加粗的0-31和127是控制字符，32-126是可显示字符</p>
+<table>
+<thead>
+<tr>
+<th>二进制</th>
+<th>十进制</th>
+<th>十六进制</th>
+<th>字符&#x2F;缩写</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>00000000</strong></td>
+<td><strong>0</strong></td>
+<td><strong>00</strong></td>
+<td><strong>NUL (NULL)</strong></td>
+<td><strong>空字符</strong></td>
+</tr>
+<tr>
+<td><strong>00000001</strong></td>
+<td><strong>1</strong></td>
+<td><strong>01</strong></td>
+<td><strong>SOH (Start Of Headling)</strong></td>
+<td><strong>标题开始</strong></td>
+</tr>
+<tr>
+<td><strong>00000010</strong></td>
+<td><strong>2</strong></td>
+<td><strong>02</strong></td>
+<td><strong>STX (Start Of Text)</strong></td>
+<td><strong>正文开始</strong></td>
+</tr>
+<tr>
+<td><strong>00000011</strong></td>
+<td><strong>3</strong></td>
+<td><strong>03</strong></td>
+<td><strong>ETX (End Of Text)</strong></td>
+<td><strong>正文结束</strong></td>
+</tr>
+<tr>
+<td><strong>00000100</strong></td>
+<td><strong>4</strong></td>
+<td><strong>04</strong></td>
+<td><strong>EOT (End Of Transmission)</strong></td>
+<td><strong>传输结束</strong></td>
+</tr>
+<tr>
+<td><strong>00000101</strong></td>
+<td><strong>5</strong></td>
+<td><strong>05</strong></td>
+<td><strong>ENQ (Enquiry)</strong></td>
+<td><strong>请求</strong></td>
+</tr>
+<tr>
+<td><strong>00000110</strong></td>
+<td><strong>6</strong></td>
+<td><strong>06</strong></td>
+<td><strong>ACK (Acknowledge)</strong></td>
+<td><strong>回应&#x2F;响应&#x2F;收到通知</strong></td>
+</tr>
+<tr>
+<td><strong>00000111</strong></td>
+<td><strong>7</strong></td>
+<td><strong>07</strong></td>
+<td><strong>BEL (Bell)</strong></td>
+<td><strong>响铃</strong></td>
+</tr>
+<tr>
+<td><strong>00001000</strong></td>
+<td><strong>8</strong></td>
+<td><strong>08</strong></td>
+<td><strong>BS (Backspace)</strong></td>
+<td><strong>退格</strong></td>
+</tr>
+<tr>
+<td><strong>00001001</strong></td>
+<td><strong>9</strong></td>
+<td><strong>09</strong></td>
+<td><strong>HT (Horizontal Tab)</strong></td>
+<td><strong>水平制表符</strong></td>
+</tr>
+<tr>
+<td><strong>00001010</strong></td>
+<td><strong>10</strong></td>
+<td><strong>0A</strong></td>
+<td><strong>LF&#x2F;NL(Line Feed&#x2F;New Line)</strong></td>
+<td><strong>换行键</strong></td>
+</tr>
+<tr>
+<td><strong>00001011</strong></td>
+<td><strong>11</strong></td>
+<td><strong>0B</strong></td>
+<td><strong>VT (Vertical Tab)</strong></td>
+<td><strong>垂直制表符</strong></td>
+</tr>
+<tr>
+<td><strong>00001100</strong></td>
+<td><strong>12</strong></td>
+<td><strong>0C</strong></td>
+<td><strong>FF&#x2F;NP (Form Feed&#x2F;New Page)</strong></td>
+<td><strong>换页键</strong></td>
+</tr>
+<tr>
+<td><strong>00001101</strong></td>
+<td><strong>13</strong></td>
+<td><strong>0D</strong></td>
+<td><strong>CR (Carriage Return)</strong></td>
+<td><strong>回车键</strong></td>
+</tr>
+<tr>
+<td><strong>00001110</strong></td>
+<td><strong>14</strong></td>
+<td><strong>0E</strong></td>
+<td><strong>SO (Shift Out)</strong></td>
+<td><strong>不用切换</strong></td>
+</tr>
+<tr>
+<td><strong>00001111</strong></td>
+<td><strong>15</strong></td>
+<td><strong>0F</strong></td>
+<td><strong>SI (Shift In)</strong></td>
+<td><strong>启用切换</strong></td>
+</tr>
+<tr>
+<td><strong>00010000</strong></td>
+<td><strong>16</strong></td>
+<td><strong>10</strong></td>
+<td><strong>DLE (Data Link Escape)</strong></td>
+<td><strong>数据链路转义</strong></td>
+</tr>
+<tr>
+<td><strong>00010001</strong></td>
+<td><strong>17</strong></td>
+<td><strong>11</strong></td>
+<td><strong>DC1&#x2F;XON (Device Control 1&#x2F;Transmission On)</strong></td>
+<td><strong>设备控制1&#x2F;传输开始</strong></td>
+</tr>
+<tr>
+<td><strong>00010010</strong></td>
+<td><strong>18</strong></td>
+<td><strong>12</strong></td>
+<td><strong>DC2 (Device Control 2)</strong></td>
+<td><strong>设备控制2</strong></td>
+</tr>
+<tr>
+<td><strong>00010011</strong></td>
+<td><strong>19</strong></td>
+<td><strong>13</strong></td>
+<td><strong>DC3&#x2F;XOFF (Device Control 3&#x2F;Transmission Off)</strong></td>
+<td><strong>设备控制3&#x2F;传输中断</strong></td>
+</tr>
+<tr>
+<td><strong>00010100</strong></td>
+<td><strong>20</strong></td>
+<td><strong>14</strong></td>
+<td><strong>DC4 (Device Control 4)</strong></td>
+<td><strong>设备控制4</strong></td>
+</tr>
+<tr>
+<td><strong>00010101</strong></td>
+<td><strong>21</strong></td>
+<td><strong>15</strong></td>
+<td><strong>NAK (Negative Acknowledge)</strong></td>
+<td><strong>无响应&#x2F;非正常响应&#x2F;拒绝接收</strong></td>
+</tr>
+<tr>
+<td><strong>00010110</strong></td>
+<td><strong>22</strong></td>
+<td><strong>16</strong></td>
+<td><strong>SYN (Synchronous Idle)</strong></td>
+<td><strong>同步空闲</strong></td>
+</tr>
+<tr>
+<td><strong>00010111</strong></td>
+<td><strong>23</strong></td>
+<td><strong>17</strong></td>
+<td><strong>ETB (End of Transmission Block)</strong></td>
+<td><strong>传输块结束&#x2F;块传输终止</strong></td>
+</tr>
+<tr>
+<td><strong>00011000</strong></td>
+<td><strong>24</strong></td>
+<td><strong>18</strong></td>
+<td><strong>CAN (Cancel)</strong></td>
+<td><strong>取消</strong></td>
+</tr>
+<tr>
+<td><strong>00011001</strong></td>
+<td><strong>25</strong></td>
+<td><strong>19</strong></td>
+<td><strong>EM (End of Medium)</strong></td>
+<td><strong>已到介质末端&#x2F;介质存储已满&#x2F;介质中断</strong></td>
+</tr>
+<tr>
+<td><strong>00011010</strong></td>
+<td><strong>26</strong></td>
+<td><strong>1A</strong></td>
+<td><strong>SUB (Substitute)</strong></td>
+<td><strong>替补&#x2F;替换</strong></td>
+</tr>
+<tr>
+<td><strong>00011011</strong></td>
+<td><strong>27</strong></td>
+<td><strong>1B</strong></td>
+<td><strong>ESC (Escape)</strong></td>
+<td><strong>逃离&#x2F;取消</strong></td>
+</tr>
+<tr>
+<td><strong>00011100</strong></td>
+<td><strong>28</strong></td>
+<td><strong>1C</strong></td>
+<td><strong>FS (File Separator)</strong></td>
+<td><strong>文件分割符</strong></td>
+</tr>
+<tr>
+<td><strong>00011101</strong></td>
+<td><strong>29</strong></td>
+<td><strong>1D</strong></td>
+<td><strong>GS (Group Separator)</strong></td>
+<td><strong>组分隔符&#x2F;分组符</strong></td>
+</tr>
+<tr>
+<td><strong>00011110</strong></td>
+<td><strong>30</strong></td>
+<td><strong>1E</strong></td>
+<td><strong>RS (Record Separator)</strong></td>
+<td><strong>记录分离符</strong></td>
+</tr>
+<tr>
+<td><strong>00011111</strong></td>
+<td><strong>31</strong></td>
+<td><strong>1F</strong></td>
+<td><strong>US (Unit Separator)</strong></td>
+<td><strong>单元分隔符</strong></td>
+</tr>
+<tr>
+<td>00100000</td>
+<td>32</td>
+<td>20</td>
+<td>(Space)</td>
+<td>空格</td>
+</tr>
+<tr>
+<td>00100001</td>
+<td>33</td>
+<td>21</td>
+<td>!</td>
+<td></td>
+</tr>
+<tr>
+<td>00100010</td>
+<td>34</td>
+<td>22</td>
+<td>“</td>
+<td></td>
+</tr>
+<tr>
+<td>00100011</td>
+<td>35</td>
+<td>23</td>
+<td>#</td>
+<td></td>
+</tr>
+<tr>
+<td>00100100</td>
+<td>36</td>
+<td>24</td>
+<td>$</td>
+<td></td>
+</tr>
+<tr>
+<td>00100101</td>
+<td>37</td>
+<td>25</td>
+<td>%</td>
+<td></td>
+</tr>
+<tr>
+<td>00100110</td>
+<td>38</td>
+<td>26</td>
+<td>&amp;</td>
+<td></td>
+</tr>
+<tr>
+<td>00100111</td>
+<td>39</td>
+<td>27</td>
+<td>‘</td>
+<td></td>
+</tr>
+<tr>
+<td>00101000</td>
+<td>40</td>
+<td>28</td>
+<td>(</td>
+<td></td>
+</tr>
+<tr>
+<td>00101001</td>
+<td>41</td>
+<td>29</td>
+<td>)</td>
+<td></td>
+</tr>
+<tr>
+<td>00101010</td>
+<td>42</td>
+<td>2A</td>
+<td>*</td>
+<td></td>
+</tr>
+<tr>
+<td>00101011</td>
+<td>43</td>
+<td>2B</td>
+<td>+</td>
+<td></td>
+</tr>
+<tr>
+<td>00101100</td>
+<td>44</td>
+<td>2C</td>
+<td>,</td>
+<td></td>
+</tr>
+<tr>
+<td>00101101</td>
+<td>45</td>
+<td>2D</td>
+<td>-</td>
+<td></td>
+</tr>
+<tr>
+<td>00101110</td>
+<td>46</td>
+<td>2E</td>
+<td>.</td>
+<td></td>
+</tr>
+<tr>
+<td>00101111</td>
+<td>47</td>
+<td>2F</td>
+<td>&#x2F;</td>
+<td></td>
+</tr>
+<tr>
+<td>00110000</td>
+<td>48</td>
+<td>30</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td>00110001</td>
+<td>49</td>
+<td>31</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>00110010</td>
+<td>50</td>
+<td>32</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td>00110011</td>
+<td>51</td>
+<td>33</td>
+<td>3</td>
+<td></td>
+</tr>
+<tr>
+<td>00110100</td>
+<td>52</td>
+<td>34</td>
+<td>4</td>
+<td></td>
+</tr>
+<tr>
+<td>00110101</td>
+<td>53</td>
+<td>35</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td>00110110</td>
+<td>54</td>
+<td>36</td>
+<td>6</td>
+<td></td>
+</tr>
+<tr>
+<td>00110111</td>
+<td>55</td>
+<td>37</td>
+<td>7</td>
+<td></td>
+</tr>
+<tr>
+<td>00111000</td>
+<td>56</td>
+<td>38</td>
+<td>8</td>
+<td></td>
+</tr>
+<tr>
+<td>00111001</td>
+<td>57</td>
+<td>39</td>
+<td>9</td>
+<td></td>
+</tr>
+<tr>
+<td>00111010</td>
+<td>58</td>
+<td>3A</td>
+<td>:</td>
+<td></td>
+</tr>
+<tr>
+<td>00111011</td>
+<td>59</td>
+<td>3B</td>
+<td>;</td>
+<td></td>
+</tr>
+<tr>
+<td>00111100</td>
+<td>60</td>
+<td>3C</td>
+<td>&lt;</td>
+<td></td>
+</tr>
+<tr>
+<td>00111101</td>
+<td>61</td>
+<td>3D</td>
+<td>&#x3D;</td>
+<td></td>
+</tr>
+<tr>
+<td>00111110</td>
+<td>62</td>
+<td>3E</td>
+<td>&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td>00111111</td>
+<td>63</td>
+<td>3F</td>
+<td>?</td>
+<td></td>
+</tr>
+<tr>
+<td>01000000</td>
+<td>64</td>
+<td>40</td>
+<td>@</td>
+<td></td>
+</tr>
+<tr>
+<td>01000001</td>
+<td>65</td>
+<td>41</td>
+<td>A</td>
+<td></td>
+</tr>
+<tr>
+<td>01000010</td>
+<td>66</td>
+<td>42</td>
+<td>B</td>
+<td></td>
+</tr>
+<tr>
+<td>01000011</td>
+<td>67</td>
+<td>43</td>
+<td>C</td>
+<td></td>
+</tr>
+<tr>
+<td>01000100</td>
+<td>68</td>
+<td>44</td>
+<td>D</td>
+<td></td>
+</tr>
+<tr>
+<td>01000101</td>
+<td>69</td>
+<td>45</td>
+<td>E</td>
+<td></td>
+</tr>
+<tr>
+<td>01000110</td>
+<td>70</td>
+<td>46</td>
+<td>F</td>
+<td></td>
+</tr>
+<tr>
+<td>01000111</td>
+<td>71</td>
+<td>47</td>
+<td>G</td>
+<td></td>
+</tr>
+<tr>
+<td>01001000</td>
+<td>72</td>
+<td>48</td>
+<td>H</td>
+<td></td>
+</tr>
+<tr>
+<td>01001001</td>
+<td>73</td>
+<td>49</td>
+<td>I</td>
+<td></td>
+</tr>
+<tr>
+<td>01001010</td>
+<td>74</td>
+<td>4A</td>
+<td>J</td>
+<td></td>
+</tr>
+<tr>
+<td>01001011</td>
+<td>75</td>
+<td>4B</td>
+<td>K</td>
+<td></td>
+</tr>
+<tr>
+<td>01001100</td>
+<td>76</td>
+<td>4C</td>
+<td>L</td>
+<td></td>
+</tr>
+<tr>
+<td>01001101</td>
+<td>77</td>
+<td>4D</td>
+<td>M</td>
+<td></td>
+</tr>
+<tr>
+<td>01001110</td>
+<td>78</td>
+<td>4E</td>
+<td>N</td>
+<td></td>
+</tr>
+<tr>
+<td>01001111</td>
+<td>79</td>
+<td>4F</td>
+<td>O</td>
+<td></td>
+</tr>
+<tr>
+<td>01010000</td>
+<td>80</td>
+<td>50</td>
+<td>P</td>
+<td></td>
+</tr>
+<tr>
+<td>01010001</td>
+<td>81</td>
+<td>51</td>
+<td>Q</td>
+<td></td>
+</tr>
+<tr>
+<td>01010010</td>
+<td>82</td>
+<td>52</td>
+<td>R</td>
+<td></td>
+</tr>
+<tr>
+<td>01010011</td>
+<td>83</td>
+<td>53</td>
+<td>S</td>
+<td></td>
+</tr>
+<tr>
+<td>01010100</td>
+<td>84</td>
+<td>54</td>
+<td>T</td>
+<td></td>
+</tr>
+<tr>
+<td>01010101</td>
+<td>85</td>
+<td>55</td>
+<td>U</td>
+<td></td>
+</tr>
+<tr>
+<td>01010110</td>
+<td>86</td>
+<td>56</td>
+<td>V</td>
+<td></td>
+</tr>
+<tr>
+<td>01010111</td>
+<td>87</td>
+<td>57</td>
+<td>W</td>
+<td></td>
+</tr>
+<tr>
+<td>01011000</td>
+<td>88</td>
+<td>58</td>
+<td>X</td>
+<td></td>
+</tr>
+<tr>
+<td>01011001</td>
+<td>89</td>
+<td>59</td>
+<td>Y</td>
+<td></td>
+</tr>
+<tr>
+<td>01011010</td>
+<td>90</td>
+<td>5A</td>
+<td>Z</td>
+<td></td>
+</tr>
+<tr>
+<td>01011011</td>
+<td>91</td>
+<td>5B</td>
+<td>[</td>
+<td></td>
+</tr>
+<tr>
+<td>01011100</td>
+<td>92</td>
+<td>5C</td>
+<td>\</td>
+<td></td>
+</tr>
+<tr>
+<td>01011101</td>
+<td>93</td>
+<td>5D</td>
+<td>]</td>
+<td></td>
+</tr>
+<tr>
+<td>01011110</td>
+<td>94</td>
+<td>5E</td>
+<td>^</td>
+<td></td>
+</tr>
+<tr>
+<td>01011111</td>
+<td>95</td>
+<td>5F</td>
+<td>_</td>
+<td></td>
+</tr>
+<tr>
+<td>01100000</td>
+<td>96</td>
+<td>60</td>
+<td>&#96;</td>
+<td></td>
+</tr>
+<tr>
+<td>01100001</td>
+<td>97</td>
+<td>61</td>
+<td>a</td>
+<td></td>
+</tr>
+<tr>
+<td>01100010</td>
+<td>98</td>
+<td>62</td>
+<td>b</td>
+<td></td>
+</tr>
+<tr>
+<td>01100011</td>
+<td>99</td>
+<td>63</td>
+<td>c</td>
+<td></td>
+</tr>
+<tr>
+<td>01100100</td>
+<td>100</td>
+<td>64</td>
+<td>d</td>
+<td></td>
+</tr>
+<tr>
+<td>01100101</td>
+<td>101</td>
+<td>65</td>
+<td>e</td>
+<td></td>
+</tr>
+<tr>
+<td>01100110</td>
+<td>102</td>
+<td>66</td>
+<td>f</td>
+<td></td>
+</tr>
+<tr>
+<td>01100111</td>
+<td>103</td>
+<td>67</td>
+<td>g</td>
+<td></td>
+</tr>
+<tr>
+<td>01101000</td>
+<td>104</td>
+<td>68</td>
+<td>h</td>
+<td></td>
+</tr>
+<tr>
+<td>01101001</td>
+<td>105</td>
+<td>69</td>
+<td>i</td>
+<td></td>
+</tr>
+<tr>
+<td>01101010</td>
+<td>106</td>
+<td>6A</td>
+<td>j</td>
+<td></td>
+</tr>
+<tr>
+<td>01101011</td>
+<td>107</td>
+<td>6B</td>
+<td>k</td>
+<td></td>
+</tr>
+<tr>
+<td>01101100</td>
+<td>108</td>
+<td>6C</td>
+<td>l</td>
+<td></td>
+</tr>
+<tr>
+<td>01101101</td>
+<td>109</td>
+<td>6D</td>
+<td>m</td>
+<td></td>
+</tr>
+<tr>
+<td>01101110</td>
+<td>110</td>
+<td>6E</td>
+<td>n</td>
+<td></td>
+</tr>
+<tr>
+<td>01101111</td>
+<td>111</td>
+<td>6F</td>
+<td>o</td>
+<td></td>
+</tr>
+<tr>
+<td>01110000</td>
+<td>112</td>
+<td>70</td>
+<td>p</td>
+<td></td>
+</tr>
+<tr>
+<td>01110001</td>
+<td>113</td>
+<td>71</td>
+<td>q</td>
+<td></td>
+</tr>
+<tr>
+<td>01110010</td>
+<td>114</td>
+<td>72</td>
+<td>r</td>
+<td></td>
+</tr>
+<tr>
+<td>01110011</td>
+<td>115</td>
+<td>73</td>
+<td>s</td>
+<td></td>
+</tr>
+<tr>
+<td>01110100</td>
+<td>116</td>
+<td>74</td>
+<td>t</td>
+<td></td>
+</tr>
+<tr>
+<td>01110101</td>
+<td>117</td>
+<td>75</td>
+<td>u</td>
+<td></td>
+</tr>
+<tr>
+<td>01110110</td>
+<td>118</td>
+<td>76</td>
+<td>v</td>
+<td></td>
+</tr>
+<tr>
+<td>01110111</td>
+<td>119</td>
+<td>77</td>
+<td>w</td>
+<td></td>
+</tr>
+<tr>
+<td>01111000</td>
+<td>120</td>
+<td>78</td>
+<td>x</td>
+<td></td>
+</tr>
+<tr>
+<td>01111001</td>
+<td>121</td>
+<td>79</td>
+<td>y</td>
+<td></td>
+</tr>
+<tr>
+<td>01111010</td>
+<td>122</td>
+<td>7A</td>
+<td>z</td>
+<td></td>
+</tr>
+<tr>
+<td>01111011</td>
+<td>123</td>
+<td>7B</td>
+<td>{</td>
+<td></td>
+</tr>
+<tr>
+<td>01111100</td>
+<td>124</td>
+<td>7C</td>
+<td>|</td>
+<td></td>
+</tr>
+<tr>
+<td>01111101</td>
+<td>125</td>
+<td>7D</td>
+<td>}</td>
+<td></td>
+</tr>
+<tr>
+<td>01111110</td>
+<td>126</td>
+<td>7E</td>
+<td>~</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>01111111</strong></td>
+<td><strong>127</strong></td>
+<td><strong>7F</strong></td>
+<td><strong>DEL (Delete)</strong></td>
+<td><strong>删除</strong></td>
+</tr>
+</tbody></table>
+</li>
+<li><p>ISO8859-1（亦称扩展ASCII编码）</p>
+<p><img src="/./assets/2021-11-16-Java%E4%B8%AD%E7%9A%84%E7%BC%96%E7%A0%81%E5%85%A8%E8%A7%A3%E6%9E%90/image-20211118111629322-16372053914671.png" alt="image-20211118111629322"></p>
+<ol>
+<li>iso-8859-1表示中文汉字 <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42307562/article/details/103427042">https://blog.csdn.net/qq_42307562/article/details/103427042</a></li>
+<li>ISO-8859-1编码是单字节编码，向下兼容ASCII，其编码范围是0x00-0xFF，0x00-0x7F之间完全和ASCII一致，0x80-0x9F之间是控制字符，0xA0-0xFF之间是文字符号。此字符集主要支持欧洲使用的语言</li>
+</ol>
+</li>
+<li><p>GBK:  </p>
+<ol>
+<li>汉字国标扩展码,基本上采用了原来GB2312-80所有的汉字及码位，并涵盖了原Unicode中所有的汉字20902，总共收录了883个符号，   21003个汉字及提供了1894个造字码位。</li>
+<li>Windows 95系统就是以GBK为内码，又由于GBK同时也涵盖了Unicode所有CJK汉字，所以也可以和Unicode做一一对应。</li>
+<li>gb2312 &lt; gbk &lt; gb18030</li>
+</ol>
+</li>
+<li><p>Unicode</p>
+<ol>
+<li>unicode编码目前最大到10FFFF，三个字节。 关于unicode的介绍参考 <a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/">https://unicode-table.com/cn/blocks/</a></li>
+<li>unicode介绍：当前的Unicode字符分为17组编排，每组称为平面（Plane），而每平面拥有65536（0~FFFF）个CodePoint。当前只用了少数平面。<ol>
+<li>0号平面 U+0000 - U+FFFF 基本多文种平面（Basic Multilingual Plane，简称BMP）</li>
+<li>1号平面 U+10000 - U+1FFFF 多文种补充平面（Supplementary Multilingual Plane，简称SMP）</li>
+<li>2号平面 U+20000 - U+2FFFF 表意文字补充平面（Supplementary Ideographic Plane，简称SIP）</li>
+<li>3号平面 U+30000 - U+3FFFF 表意文字第三平面（未正式使用）（Tertiary Ideographic Plane，简称TIP）</li>
+<li>4号平面至13号平面 U+40000 - U+DFFFF（尚未使用）</li>
+<li>14号平面 U+E0000 - U+EFFFF 特别用途补充平面（Supplementary Special-purpose Plane，简称SSP）</li>
+<li>15号平面 U+F0000 - U+FFFFF 保留作为私人使用区（A区）（Private Use Area-A，简称PUA-A）</li>
+<li>16号平面 U+100000 - U+10FFFF 保留作为私人使用区（B区）（Private Use Area-B，简称PUA-B）<table>
+<thead>
+<tr>
+<th>unicode编码</th>
+<th>表示的字符含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0000—007F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/basic-latin/">基本拉丁字母</a></td>
+</tr>
+<tr>
+<td>0080—00FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/latin-1-supplement/">拉丁文补充1</a></td>
+</tr>
+<tr>
+<td>0100—017F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/latin-extended-a/">拉丁文扩展A</a></td>
+</tr>
+<tr>
+<td>0180—024F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/latin-extended-b/">拉丁文扩展B</a></td>
+</tr>
+<tr>
+<td>0250—02AF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ipa-extensions/">国际音标扩展</a></td>
+</tr>
+<tr>
+<td>02B0—02FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/spacing-modifier-letters/">占位修饰符号</a></td>
+</tr>
+<tr>
+<td>0300—036F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/combining-diacritical-marks/">结合附加符号</a></td>
+</tr>
+<tr>
+<td>0370—03FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/greek-coptic/">希腊字母及科普特字母</a></td>
+</tr>
+<tr>
+<td>0400—04FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cyrillic/">西里尔字母</a></td>
+</tr>
+<tr>
+<td>0500—052F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cyrillic-supplement/">西里尔字母补充</a></td>
+</tr>
+<tr>
+<td>0530—058F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/armenian/">亚美尼亚字母</a></td>
+</tr>
+<tr>
+<td>0590—05FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/hebrew/">希伯来文</a></td>
+</tr>
+<tr>
+<td>0600—06FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/arabic/">阿拉伯文</a></td>
+</tr>
+<tr>
+<td>0700—074F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/syrian/">叙利亚文</a></td>
+</tr>
+<tr>
+<td>0750—077F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/arabic-supplement/">阿拉伯文补充</a></td>
+</tr>
+<tr>
+<td>0780—07BF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/thaana/">它拿字母</a></td>
+</tr>
+<tr>
+<td>07C0—07FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/nko/">西非书面语言</a></td>
+</tr>
+<tr>
+<td>0800—083F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/samaritan/">撒玛利亚字母</a></td>
+</tr>
+<tr>
+<td>0840—085F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/mandaic/">Mandaic</a></td>
+</tr>
+<tr>
+<td>0860—086F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/syriac-supplement/">Syriac Supplement</a></td>
+</tr>
+<tr>
+<td>08A0—08FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/arabic-extended-a/">阿拉伯语扩展</a></td>
+</tr>
+<tr>
+<td>0900—097F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/devanagari/">天城文</a></td>
+</tr>
+<tr>
+<td>0980—09FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/bengali/">孟加拉文</a></td>
+</tr>
+<tr>
+<td>0A00—0A7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/gurmukhi/">果鲁穆奇字母</a></td>
+</tr>
+<tr>
+<td>0A80—0AFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/gujarati/">古吉拉特文</a></td>
+</tr>
+<tr>
+<td>0B00—0B7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/oriya/">奥里亚文</a></td>
+</tr>
+<tr>
+<td>0B80—0BFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tamil/">泰米尔文</a></td>
+</tr>
+<tr>
+<td>0C00—0C7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/telugu/">泰卢固文</a></td>
+</tr>
+<tr>
+<td>0C80—0CFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/kannada/">卡纳达文</a></td>
+</tr>
+<tr>
+<td>0D00—0D7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/malayalam/">马拉雅拉姆文</a></td>
+</tr>
+<tr>
+<td>0D80—0DFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/sinhala/">僧伽罗文</a></td>
+</tr>
+<tr>
+<td>0E00—0E7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/thai/">泰文</a></td>
+</tr>
+<tr>
+<td>0E80—0EFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/lao/">老挝文</a></td>
+</tr>
+<tr>
+<td>0F00—0FFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tibetan/">藏文</a></td>
+</tr>
+<tr>
+<td>1000—109F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/myanmar/">缅甸文</a></td>
+</tr>
+<tr>
+<td>10A0—10FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/georgian/">格鲁吉亚字母</a></td>
+</tr>
+<tr>
+<td>1100—11FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/hangul-jamo/">谚文字母</a></td>
+</tr>
+<tr>
+<td>1200—137F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ethiopic/">埃塞俄比亚语</a></td>
+</tr>
+<tr>
+<td>1380—139F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ethiopic-supplement/">埃塞俄比亚语补充</a></td>
+</tr>
+<tr>
+<td>13A0—13FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cherokee/">切罗基字母</a></td>
+</tr>
+<tr>
+<td>1400—167F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/unified-canadian-aboriginal-syllabics/">统一加拿大原住民音节文字</a></td>
+</tr>
+<tr>
+<td>1680—169F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ogham/">欧甘字母</a></td>
+</tr>
+<tr>
+<td>16A0—16FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/runic/">卢恩字母</a></td>
+</tr>
+<tr>
+<td>1700—171F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tagalog/">他加禄字母</a></td>
+</tr>
+<tr>
+<td>1720—173F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/hanunoo/">哈努诺文</a></td>
+</tr>
+<tr>
+<td>1740—175F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/buhid/">布迪文</a></td>
+</tr>
+<tr>
+<td>1760—177F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tagbanwa/">塔格巴努亚文</a></td>
+</tr>
+<tr>
+<td>1780—17FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/khmer/">高棉文</a></td>
+</tr>
+<tr>
+<td>1800—18AF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/mongolian/">蒙古文</a></td>
+</tr>
+<tr>
+<td>18B0—18FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/unified-canadian-aboriginal-syllabics-extended/">统一加拿大原住民音节文字扩展</a></td>
+</tr>
+<tr>
+<td>1900—194F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/limbu/">林布文</a></td>
+</tr>
+<tr>
+<td>1950—197F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tai-le/">德宏傣文</a></td>
+</tr>
+<tr>
+<td>1980—19DF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/new-tai-lue/">新傣仂文</a></td>
+</tr>
+<tr>
+<td>19E0—19FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/khmer-symbols/">高棉文符号</a></td>
+</tr>
+<tr>
+<td>1A00—1A1F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/buginese/">布吉文</a></td>
+</tr>
+<tr>
+<td>1A20—1AAF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tai-tham/">老傣文</a></td>
+</tr>
+<tr>
+<td>1AB0—1AFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/combining-diacritical-marks-extended/">Combining Diacritical Marks Extended</a></td>
+</tr>
+<tr>
+<td>1B00—1B7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/balinese/">巴厘字母</a></td>
+</tr>
+<tr>
+<td>1B80—1BBF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/sundanese/">巽他字母</a></td>
+</tr>
+<tr>
+<td>1BC0—1BFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/batak/">巴塔克文</a></td>
+</tr>
+<tr>
+<td>1C00—1C4F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/lepcha/">雷布查字母</a></td>
+</tr>
+<tr>
+<td>1C50—1C7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ol-chiki/">Ol-Chiki</a></td>
+</tr>
+<tr>
+<td>1C80—1C8F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cyrillic-extended-c/">Cyrillic Extended C</a></td>
+</tr>
+<tr>
+<td>1C90—1CBF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/georgian-extended/">Georgian Extended</a></td>
+</tr>
+<tr>
+<td>1CC0—1CCF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/sundanese-supplement/">巽他字母补充</a></td>
+</tr>
+<tr>
+<td>1CD0—1CFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/vedic-extensions/">吠陀梵文</a></td>
+</tr>
+<tr>
+<td>1D00—1D7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/phonetic-extensions/">语音学扩展</a></td>
+</tr>
+<tr>
+<td>1D80—1DBF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/phonetic-extensions-supplement/">语音学扩展补充</a></td>
+</tr>
+<tr>
+<td>1DC0—1DFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/combining-diacritical-marks-supplement/">结合附加符号补充</a></td>
+</tr>
+<tr>
+<td>1E00—1EFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/latin-extended-additional/">拉丁文扩展附加</a></td>
+</tr>
+<tr>
+<td>1F00—1FFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/greek-extended/">希腊语扩展</a></td>
+</tr>
+<tr>
+<td>2000—206F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/general-punctuation/">常用标点</a></td>
+</tr>
+<tr>
+<td>2070—209F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/superscripts-and-subscripts/">上标及下标</a></td>
+</tr>
+<tr>
+<td>20A0—20CF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/currency-symbols/">货币符号</a></td>
+</tr>
+<tr>
+<td>20D0—20FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/combining-diacritical-marks-for-symbols/">组合用记号</a></td>
+</tr>
+<tr>
+<td>2100—214F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/letterlike-symbols/">字母式符号</a></td>
+</tr>
+<tr>
+<td>2150—218F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/number-forms/">数字形式</a></td>
+</tr>
+<tr>
+<td>2190—21FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/arrows/">箭头</a></td>
+</tr>
+<tr>
+<td>2200—22FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/mathematical-operators/">数学运算符</a></td>
+</tr>
+<tr>
+<td>2300—23FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/miscellaneous-technical/">杂项工业符号</a></td>
+</tr>
+<tr>
+<td>2400—243F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/control-pictures/">控制图片</a></td>
+</tr>
+<tr>
+<td>2440—245F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/optical-character-recognition/">光学识别符</a></td>
+</tr>
+<tr>
+<td>2460—24FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/enclosed-alphanumerics/">带圈或括号的字母数字</a></td>
+</tr>
+<tr>
+<td>2500—257F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/box-drawing/">制表符</a></td>
+</tr>
+<tr>
+<td>2580—259F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/block-elements/">方块元素</a></td>
+</tr>
+<tr>
+<td>25A0—25FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/geometric-shapes/">几何图形</a></td>
+</tr>
+<tr>
+<td>2600—26FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/miscellaneous-symbols/">杂项符号</a></td>
+</tr>
+<tr>
+<td>2700—27BF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/dingbats/">印刷符号</a></td>
+</tr>
+<tr>
+<td>27C0—27EF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/miscellaneous-mathematical-symbols-a/">杂项数学符号A</a></td>
+</tr>
+<tr>
+<td>27F0—27FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/supplemental-arrows-a/">追加箭头A</a></td>
+</tr>
+<tr>
+<td>2800—28FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/braille-patterns/">盲文点字模型</a></td>
+</tr>
+<tr>
+<td>2900—297F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/supplemental-arrows-b/">追加箭头B</a></td>
+</tr>
+<tr>
+<td>2980—29FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/miscellaneous-mathematical-symbols-b/">杂项数学符号B</a></td>
+</tr>
+<tr>
+<td>2A00—2AFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/supplemental-mathematical-operators/">追加数学运算符</a></td>
+</tr>
+<tr>
+<td>2B00—2BFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/miscellaneous-symbols-and-arrows/">杂项符号和箭头</a></td>
+</tr>
+<tr>
+<td>2C00—2C5F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/glagolitic/">格拉哥里字母</a></td>
+</tr>
+<tr>
+<td>2C60—2C7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/latin-extended-c/">拉丁文扩展C</a></td>
+</tr>
+<tr>
+<td>2C80—2CFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/coptic/">科普特字母</a></td>
+</tr>
+<tr>
+<td>2D00—2D2F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/georgian-supplement/">格鲁吉亚字母补充</a></td>
+</tr>
+<tr>
+<td>2D30—2D7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tifinagh/">提非纳文</a></td>
+</tr>
+<tr>
+<td>2D80—2DDF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ethiopic-extended/">埃塞俄比亚语扩展</a></td>
+</tr>
+<tr>
+<td>2DE0—2DFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cyrillic-extended/">西里尔字母扩展</a></td>
+</tr>
+<tr>
+<td>2E00—2E7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/supplemental-punctuation/">追加标点</a></td>
+</tr>
+<tr>
+<td>2E80—2EFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-radicals-supplement/">中日韩部首补充</a></td>
+</tr>
+<tr>
+<td>2F00—2FDF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/kangxi-radicals/">康熙部首</a></td>
+</tr>
+<tr>
+<td>2FF0—2FFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ideographic-description-characters/">表意文字描述符</a></td>
+</tr>
+<tr>
+<td>3000—303F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-symbols-and-punctuation/">中日韩符号和标点</a></td>
+</tr>
+<tr>
+<td>3040—309F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/hiragana/">日文平假名</a></td>
+</tr>
+<tr>
+<td>30A0—30FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/katakana/">日文片假名</a></td>
+</tr>
+<tr>
+<td>3100—312F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/bopomofo/">注音字母</a></td>
+</tr>
+<tr>
+<td>3130—318F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/hangul-compatibility-jamo/">谚文兼容字母</a></td>
+</tr>
+<tr>
+<td>3190—319F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/kanbun/">象形字注释标志</a></td>
+</tr>
+<tr>
+<td>31A0—31BF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/bopomofo-extended/">注音字母扩展</a></td>
+</tr>
+<tr>
+<td>31C0—31EF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-strokes/">中日韩笔画</a></td>
+</tr>
+<tr>
+<td>31F0—31FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/katakana-phonetic-extensions/">日文片假名语音扩展</a></td>
+</tr>
+<tr>
+<td>3200—32FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/enclosed-cjk-letters-and-months/">带圈中日韩字母和月份</a></td>
+</tr>
+<tr>
+<td>3300—33FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-compatibility/">中日韩字符集兼容</a></td>
+</tr>
+<tr>
+<td>3400—4DBF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-unified-ideographs-extension-a/">中日韩统一表意文字扩展A</a></td>
+</tr>
+<tr>
+<td>4DC0—4DFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/yijing-hexagram-symbols/">易经六十四卦符号</a></td>
+</tr>
+<tr>
+<td>4E00—9FFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-unified-ideographs/">中日韩统一表意文字</a></td>
+</tr>
+<tr>
+<td>A000—A48F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/yi-syllables/">彝文音节</a></td>
+</tr>
+<tr>
+<td>A490—A4CF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/yi-radicals/">彝文字根</a></td>
+</tr>
+<tr>
+<td>A4D0—A4FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/lisu/">Lisu</a></td>
+</tr>
+<tr>
+<td>A500—A63F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/old-lisu-alphabet/">老傈僳文</a></td>
+</tr>
+<tr>
+<td>A640—A69F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ciryllic-extended-B/">西里尔字母扩展B</a></td>
+</tr>
+<tr>
+<td>A6A0—A6FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/bamum/">巴姆穆语</a></td>
+</tr>
+<tr>
+<td>A700—A71F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/modifier-tone-letters/">声调修饰字母</a></td>
+</tr>
+<tr>
+<td>A720—A7FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/latin-extended-d/">拉丁文扩展D</a></td>
+</tr>
+<tr>
+<td>A800—A82F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/syloty-nagri/">锡尔赫特文</a></td>
+</tr>
+<tr>
+<td>A830—A83F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/indian-numeric-character/">印第安数字</a></td>
+</tr>
+<tr>
+<td>A840—A87F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/phags-pa/">八思巴文</a></td>
+</tr>
+<tr>
+<td>A880—A8DF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/saurashtra/">索拉什特拉</a></td>
+</tr>
+<tr>
+<td>A8E0—A8FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/devanagari-extended-characters/">天城文扩展</a></td>
+</tr>
+<tr>
+<td>A900—A92F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/kayah-li/">克耶字母</a></td>
+</tr>
+<tr>
+<td>A930—A95F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/rejang/">勒姜语</a></td>
+</tr>
+<tr>
+<td>A960—A97F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/hangul/">谚文字母扩展A</a></td>
+</tr>
+<tr>
+<td>A980—A9DF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/javanese-alphabet/">爪哇语</a></td>
+</tr>
+<tr>
+<td>A9E0—A9FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/myanmar-extended-b/">Myanmar Extended-B</a></td>
+</tr>
+<tr>
+<td>AA00—AA5F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cham-alphabet/">鞑靼文</a></td>
+</tr>
+<tr>
+<td>AA60—AA7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/burmese-alphabet-extention-a/">缅甸语扩展</a></td>
+</tr>
+<tr>
+<td>AA80—AADF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tai-viet-alphabet/">越南傣文</a></td>
+</tr>
+<tr>
+<td>AAE0—AAFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/meitei-language-extensions/">曼尼普尔文扩展</a></td>
+</tr>
+<tr>
+<td>AB00—AB2F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ethiopic-extended-a/">埃塞俄比亚文</a></td>
+</tr>
+<tr>
+<td>AB30—AB6F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/latin-extended-e/">Latin Extended-E</a></td>
+</tr>
+<tr>
+<td>AB70—ABBF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cherokee-supplement/">Cherokee Supplement</a></td>
+</tr>
+<tr>
+<td>ABC0—ABFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/meitei-language/">曼尼普尔文</a></td>
+</tr>
+<tr>
+<td>AC00—D7AF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/hangul-syllables/">谚文音节</a></td>
+</tr>
+<tr>
+<td>D7B0—D7FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/hangul-jamo-extended-b/">Hangul Jamo Extended-B</a></td>
+</tr>
+<tr>
+<td>D800—DB7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/high-surrogates/">代理对高位字</a></td>
+</tr>
+<tr>
+<td>DB80—DBFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/high-private-use-surrogates/">代理对私用区高位字</a></td>
+</tr>
+<tr>
+<td>DC00—DFFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/low-surrogates/">代理对低位字</a></td>
+</tr>
+<tr>
+<td>E000—F8FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/private-use-area/">私用区</a></td>
+</tr>
+<tr>
+<td>F900—FAFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-compatibility-ideographs/">中日韩兼容表意文字</a></td>
+</tr>
+<tr>
+<td>FB00—FB4F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/alphabetic-presentation-forms/">字母表达形式（拉丁字母连字、亚美尼亚字母连字、希伯来文表现形式）</a></td>
+</tr>
+<tr>
+<td>FB50—FDFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/arabic-presentation-forms-a/">阿拉伯文表达形式A</a></td>
+</tr>
+<tr>
+<td>FE00—FE0F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/variation-selectors/">异体字选择符</a></td>
+</tr>
+<tr>
+<td>FE10—FE1F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/vertical-forms/">竖排形式</a></td>
+</tr>
+<tr>
+<td>FE20—FE2F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/combining-half-marks/">组合用半符号</a></td>
+</tr>
+<tr>
+<td>FE30—FE4F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-compatibility-forms/">中日韩兼容形式</a></td>
+</tr>
+<tr>
+<td>FE50—FE6F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/small-form-variants/">小写变体形式</a></td>
+</tr>
+<tr>
+<td>FE70—FEFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/arabic-presentation-forms-b/">阿拉伯文表达形式B</a></td>
+</tr>
+<tr>
+<td>FF00—FFEF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/halfwidth-and-fullwidth-forms/">半角及全角形式</a></td>
+</tr>
+<tr>
+<td>FFF0—FFFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/specials/">特殊</a></td>
+</tr>
+<tr>
+<td>10000—1007F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/linear-b-syllabary/">Linear B Syllabary</a></td>
+</tr>
+<tr>
+<td>10080—100FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/linear-b-ideograms/">Linear B Ideograms</a></td>
+</tr>
+<tr>
+<td>10100—1013F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/aegean-numbers/">Aegean Numbers</a></td>
+</tr>
+<tr>
+<td>10140—1018F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ancient-greek-numbers/">Ancient Greek Numbers</a></td>
+</tr>
+<tr>
+<td>10190—101CF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ancient-symbols/">Ancient Symbols</a></td>
+</tr>
+<tr>
+<td>101D0—101FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/phaistos-disc/">Phaistos Disc</a></td>
+</tr>
+<tr>
+<td>10280—1029F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/lycian/">Lycian</a></td>
+</tr>
+<tr>
+<td>102A0—102DF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/carian/">Carian</a></td>
+</tr>
+<tr>
+<td>102E0—102FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/coptic-epact-numbers/">Coptic Epact Numbers</a></td>
+</tr>
+<tr>
+<td>10300—1032F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/old-italic/">Old Italic</a></td>
+</tr>
+<tr>
+<td>10330—1034F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/gothic/">Gothic</a></td>
+</tr>
+<tr>
+<td>10350—1037F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/old-permic/">Old Permic</a></td>
+</tr>
+<tr>
+<td>10380—1039F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ugaritic/">Ugaritic</a></td>
+</tr>
+<tr>
+<td>103A0—103DF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/old-persian/">Old Persian</a></td>
+</tr>
+<tr>
+<td>10400—1044F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/deseret/">Deseret</a></td>
+</tr>
+<tr>
+<td>10450—1047F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/shavian/">Shavian</a></td>
+</tr>
+<tr>
+<td>10480—104AF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/osmanya/">Osmanya</a></td>
+</tr>
+<tr>
+<td>104B0—104FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/osage/">Osage</a></td>
+</tr>
+<tr>
+<td>10500—1052F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/elbasan/">Elbasan</a></td>
+</tr>
+<tr>
+<td>10530—1056F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/caucasian-albanian/">Caucasian Albanian</a></td>
+</tr>
+<tr>
+<td>10600—1077F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/linear-a/">Linear A</a></td>
+</tr>
+<tr>
+<td>10800—1083F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cypriot-syllabary/">Cypriot Syllabary</a></td>
+</tr>
+<tr>
+<td>10840—1085F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/imperial-aramaic/">Imperial Aramaic</a></td>
+</tr>
+<tr>
+<td>10860—1087F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/palmyrene/">Palmyrene</a></td>
+</tr>
+<tr>
+<td>10880—108AF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/nabataean/">Nabataean</a></td>
+</tr>
+<tr>
+<td>108E0—108FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/hatran/">Hatran</a></td>
+</tr>
+<tr>
+<td>10900—1091F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/phoenician/">Phoenician</a></td>
+</tr>
+<tr>
+<td>10920—1093F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/lydian/">Lydian</a></td>
+</tr>
+<tr>
+<td>10980—1099F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/meroitic-hieroglyphs/">Meroitic Hieroglyphs</a></td>
+</tr>
+<tr>
+<td>109A0—109FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/meroitic-cursive/">Meroitic Cursive</a></td>
+</tr>
+<tr>
+<td>10A00—10A5F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/kharoshthi/">Kharoshthi</a></td>
+</tr>
+<tr>
+<td>10A60—10A7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/old-south-arabian/">Old South Arabian</a></td>
+</tr>
+<tr>
+<td>10A80—10A9F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/old-north-arabian/">Old North Arabian</a></td>
+</tr>
+<tr>
+<td>10AC0—10AFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/manichaean/">Manichaean</a></td>
+</tr>
+<tr>
+<td>10B00—10B3F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/avestan/">Avestan</a></td>
+</tr>
+<tr>
+<td>10B40—10B5F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/inscriptional-parthian/">Inscriptional Parthian</a></td>
+</tr>
+<tr>
+<td>10B60—10B7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/inscriptional-pahlavi/">Inscriptional Pahlavi</a></td>
+</tr>
+<tr>
+<td>10B80—10BAF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/psalter-pahlavi/">Psalter Pahlavi</a></td>
+</tr>
+<tr>
+<td>10C00—10C4F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/old-turkic/">Old Turkic</a></td>
+</tr>
+<tr>
+<td>10C80—10CFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/old-hungarian/">Old Hungarian</a></td>
+</tr>
+<tr>
+<td>10D00—10D3F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/hanifi-rohingya/">Hanifi Rohingya</a></td>
+</tr>
+<tr>
+<td>10E60—10E7F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/rumi-numeral-symbols/">Rumi Numeral Symbols</a></td>
+</tr>
+<tr>
+<td>10E80—10EBF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/yezidi/">Yezidi</a></td>
+</tr>
+<tr>
+<td>10F00—10F2F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/old-sogdian/">Old Sogdian</a></td>
+</tr>
+<tr>
+<td>10F30—10F6F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/sogdian/">Sogdian</a></td>
+</tr>
+<tr>
+<td>10FB0—10FDF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/chorasmian/">Chorasmian</a></td>
+</tr>
+<tr>
+<td>10FE0—10FFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/elymaic/">Elymaic</a></td>
+</tr>
+<tr>
+<td>11000—1107F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/brahmi/">Brahmi</a></td>
+</tr>
+<tr>
+<td>11080—110CF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/kaithi/">Kaithi</a></td>
+</tr>
+<tr>
+<td>110D0—110FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/sora-sompeng/">Sora Sompeng</a></td>
+</tr>
+<tr>
+<td>11100—1114F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/chakma/">Chakma</a></td>
+</tr>
+<tr>
+<td>11150—1117F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/mahajani/">Mahajani</a></td>
+</tr>
+<tr>
+<td>11180—111DF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/sharada/">Sharada</a></td>
+</tr>
+<tr>
+<td>111E0—111FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/sinhala-archaic-numbers/">Sinhala Archaic Numbers</a></td>
+</tr>
+<tr>
+<td>11200—1124F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/khojki/">Khojki</a></td>
+</tr>
+<tr>
+<td>11280—112AF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/multani/">Multani</a></td>
+</tr>
+<tr>
+<td>112B0—112FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/khudawadi/">Khudawadi</a></td>
+</tr>
+<tr>
+<td>11300—1137F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/grantha/">Grantha</a></td>
+</tr>
+<tr>
+<td>11400—1147F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/newa/">Newa</a></td>
+</tr>
+<tr>
+<td>11480—114DF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tirhuta/">Tirhuta</a></td>
+</tr>
+<tr>
+<td>11580—115FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/siddham/">Siddham</a></td>
+</tr>
+<tr>
+<td>11600—1165F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/modi/">Modi</a></td>
+</tr>
+<tr>
+<td>11660—1167F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/mongolian-supplement/">Mongolian Supplement</a></td>
+</tr>
+<tr>
+<td>11680—116CF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/takri/">Takri</a></td>
+</tr>
+<tr>
+<td>11700—1173F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ahom/">Ahom</a></td>
+</tr>
+<tr>
+<td>11800—1184F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/dogra/">Dogra</a></td>
+</tr>
+<tr>
+<td>118A0—118FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/warang-citi/">Warang Citi</a></td>
+</tr>
+<tr>
+<td>11900—1195F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/dives-akuru/">Dives Akuru</a></td>
+</tr>
+<tr>
+<td>119A0—119FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/nandinagari/">Nandinagari</a></td>
+</tr>
+<tr>
+<td>11A00—11A4F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/zanabazar-square/">Zanabazar Square</a></td>
+</tr>
+<tr>
+<td>11A50—11AAF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/soyombo/">Soyombo</a></td>
+</tr>
+<tr>
+<td>11AC0—11AFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/pau-cin-hau/">Pau Cin Hau</a></td>
+</tr>
+<tr>
+<td>11C00—11C6F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/bhaiksuki/">Bhaiksuki</a></td>
+</tr>
+<tr>
+<td>11C70—11CBF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/marchen/">Marchen</a></td>
+</tr>
+<tr>
+<td>11D00—11D5F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/masaram-gondi/">Masaram Gondi</a></td>
+</tr>
+<tr>
+<td>11D60—11DAF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/gunjala-gondi/">Gunjala Gondi</a></td>
+</tr>
+<tr>
+<td>11EE0—11EFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/makasar/">Makasar</a></td>
+</tr>
+<tr>
+<td>11FB0—11FBF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/lisu-supplement/">Lisu Supplement</a></td>
+</tr>
+<tr>
+<td>11FC0—11FFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tamil-supplement/">Tamil Supplement</a></td>
+</tr>
+<tr>
+<td>12000—123FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cuneiform/">Cuneiform</a></td>
+</tr>
+<tr>
+<td>12400—1247F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cuneiform-numbers-and-punctuation/">Cuneiform Numbers and Punctuation</a></td>
+</tr>
+<tr>
+<td>12480—1254F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/early-dynastic-cuneiform/">Early Dynastic Cuneiform</a></td>
+</tr>
+<tr>
+<td>13000—1342F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/egyptian-hieroglyphs/">Egyptian Hieroglyphs</a></td>
+</tr>
+<tr>
+<td>13430—1343F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/egyptian-hieroglyph-format-controls/">Egyptian Hieroglyph Format Controls</a></td>
+</tr>
+<tr>
+<td>14400—1467F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/anatolian-hieroglyphs/">Anatolian Hieroglyphs</a></td>
+</tr>
+<tr>
+<td>16800—16A3F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/bamum-supplement/">Bamum Supplement</a></td>
+</tr>
+<tr>
+<td>16A40—16A6F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/mro/">Mro</a></td>
+</tr>
+<tr>
+<td>16AD0—16AFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/bassa-vah/">Bassa Vah</a></td>
+</tr>
+<tr>
+<td>16B00—16B8F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/pahawh-hmong/">Pahawh Hmong</a></td>
+</tr>
+<tr>
+<td>16E40—16E9F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/medefaidrin/">Medefaidrin</a></td>
+</tr>
+<tr>
+<td>16F00—16F9F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/miao/">Miao</a></td>
+</tr>
+<tr>
+<td>16FE0—16FFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ideographic-symbols-and-punctuation/">Ideographic Symbols and Punctuation</a></td>
+</tr>
+<tr>
+<td>17000—187FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tangut/">Tangut</a></td>
+</tr>
+<tr>
+<td>18800—18AFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tangut-components/">Tangut Components</a></td>
+</tr>
+<tr>
+<td>18B00—18CFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/khitan-small-script/">Khitan Small Script</a></td>
+</tr>
+<tr>
+<td>18D00—18D8F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tangut-supplement/">Tangut Supplement</a></td>
+</tr>
+<tr>
+<td>1B000—1B0FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/kana-supplement/">Kana Supplement</a></td>
+</tr>
+<tr>
+<td>1B100—1B12F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/kana-extended-a/">Kana Extended-A</a></td>
+</tr>
+<tr>
+<td>1B130—1B16F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/small-kana-extension/">Small Kana Extension</a></td>
+</tr>
+<tr>
+<td>1B170—1B2FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/nushu/">Nushu</a></td>
+</tr>
+<tr>
+<td>1BC00—1BC9F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/duployan/">Duployan</a></td>
+</tr>
+<tr>
+<td>1BCA0—1BCAF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/shorthand-format-controls/">Shorthand Format Controls</a></td>
+</tr>
+<tr>
+<td>1D000—1D0FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/byzantine-musical-symbols/">Byzantine Musical Symbols</a></td>
+</tr>
+<tr>
+<td>1D100—1D1FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/musical-symbols/">Musical Symbols</a></td>
+</tr>
+<tr>
+<td>1D200—1D24F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ancient-greek-musical-notation/">Ancient Greek Musical Notation</a></td>
+</tr>
+<tr>
+<td>1D2E0—1D2FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/mayan-numerals/">Mayan Numerals</a></td>
+</tr>
+<tr>
+<td>1D300—1D35F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tai-xuan-jing-symbols/">Tai Xuan Jing Symbols</a></td>
+</tr>
+<tr>
+<td>1D360—1D37F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/counting-rod-numerals/">Counting Rod Numerals</a></td>
+</tr>
+<tr>
+<td>1D400—1D7FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/mathematical-alphanumeric-symbols/">Mathematical Alphanumeric Symbols</a></td>
+</tr>
+<tr>
+<td>1D800—1DAAF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/sutton-sign-writing/">Sutton SignWriting</a></td>
+</tr>
+<tr>
+<td>1E000—1E02F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/glagolitic-supplement/">Glagolitic Supplement</a></td>
+</tr>
+<tr>
+<td>1E100—1E14F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/nyiakeng-puachue-hmong/">Nyiakeng Puachue Hmong</a></td>
+</tr>
+<tr>
+<td>1E2C0—1E2FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/wancho/">Wancho</a></td>
+</tr>
+<tr>
+<td>1E800—1E8DF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/mende-kikakui/">Mende Kikakui</a></td>
+</tr>
+<tr>
+<td>1E900—1E95F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/adlam/">Adlam</a></td>
+</tr>
+<tr>
+<td>1EC70—1ECBF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/indic-siyaq-numbers/">Indic Siyaq Numbers</a></td>
+</tr>
+<tr>
+<td>1ED00—1ED4F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ottoman-siyaq-numbers/">Ottoman Siyaq Numbers</a></td>
+</tr>
+<tr>
+<td>1EE00—1EEFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/arabic-mathematical-alphabetic-symbols/">Arabic Mathematical Alphabetic Symbols</a></td>
+</tr>
+<tr>
+<td>1F000—1F02F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/mahjong-tiles/">Mahjong Tiles</a></td>
+</tr>
+<tr>
+<td>1F030—1F09F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/domino-tiles/">Domino Tiles</a></td>
+</tr>
+<tr>
+<td>1F0A0—1F0FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/playing-cards/">Playing Cards</a></td>
+</tr>
+<tr>
+<td>1F100—1F1FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/enclosed-alphanumeric-supplement/">Enclosed Alphanumeric Supplement</a></td>
+</tr>
+<tr>
+<td>1F200—1F2FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/enclosed-ideographic-supplement/">Enclosed Ideographic Supplement</a></td>
+</tr>
+<tr>
+<td>1F300—1F5FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/miscellaneous-symbols-and-pictographs/">Miscellaneous Symbols and Pictographs</a></td>
+</tr>
+<tr>
+<td>1F600—1F64F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/emoticons/">Emoticons (Emoji)</a></td>
+</tr>
+<tr>
+<td>1F650—1F67F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/ornamental-dingbats/">Ornamental Dingbats</a></td>
+</tr>
+<tr>
+<td>1F680—1F6FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/transport-and-map-symbols/">Transport and Map Symbols</a></td>
+</tr>
+<tr>
+<td>1F700—1F77F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/alchemical-symbols/">Alchemical Symbols</a></td>
+</tr>
+<tr>
+<td>1F780—1F7FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/geometric-shapes-extended/">Geometric Shapes Extended</a></td>
+</tr>
+<tr>
+<td>1F800—1F8FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/supplemental-arrows-c/">Supplemental Arrows-C</a></td>
+</tr>
+<tr>
+<td>1F900—1F9FF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/supplemental-symbols-and-pictographs/">Supplemental Symbols and Pictographs</a></td>
+</tr>
+<tr>
+<td>1FA00—1FA6F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/chess-symbols/">Chess Symbols</a></td>
+</tr>
+<tr>
+<td>1FA70—1FAFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/symbols-and-pictographs-extended-a/">Symbols and Pictographs Extended-A</a></td>
+</tr>
+<tr>
+<td>1FB00—1FBFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/symbols-for-legacy-computing/">Symbols for Legacy Computing</a></td>
+</tr>
+<tr>
+<td>20000—2A6DF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-unified-ideographs-extension-b/">CJK Unified Ideographs Extension B</a></td>
+</tr>
+<tr>
+<td>2A700—2B73F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-unified-ideographs-extension-c/">CJK Unified Ideographs Extension C</a></td>
+</tr>
+<tr>
+<td>2B740—2B81F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-unified-ideographs-extension-d/">CJK Unified Ideographs Extension D</a></td>
+</tr>
+<tr>
+<td>2B820—2CEAF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-unified-ideographs-extension-e/">CJK Unified Ideographs Extension E</a></td>
+</tr>
+<tr>
+<td>2CEB0—2EBEF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-unified-ideographs-extension-f/">CJK Unified Ideographs Extension F</a></td>
+</tr>
+<tr>
+<td>2F800—2FA1F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-compatibility-ideographs-supplement/">CJK Compatibility Ideographs Supplement</a></td>
+</tr>
+<tr>
+<td>30000—3134F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/cjk-unified-ideographs-extension-g/">CJK Unified Ideographs Extension G</a></td>
+</tr>
+<tr>
+<td>E0000—E007F</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/tags/">Tags</a></td>
+</tr>
+<tr>
+<td>E0100—E01EF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/variation-selectors-supplement/">Variation Selectors Supplement</a></td>
+</tr>
+<tr>
+<td>F0000—FFFFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/supplementary-private-use-area-a/">Supplementary Private Use Area-A</a></td>
+</tr>
+<tr>
+<td>100000—10FFFF</td>
+<td><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/blocks/supplementary-private-use-area-b/">Supplementary Private Use Area-B</a></td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>UTF-8</p>
+<ol>
+<li><p>utf-8编码思想</p>
+<ol>
+<li>参考 <a target="_blank" rel="noopener" href="https://blog.csdn.net/lc11535/article/details/100013653">https://blog.csdn.net/lc11535/article/details/100013653</a></li>
+<li>看下边的格式一目了然</li>
+</ol>
+</li>
+<li><p>格式（说明： 最后一个不是0001 0000 - 001F FFFF的原因是：目前unicode只有0010 FFFF这么多个字符。）</p>
+<p><img src="/./assets/2021-11-16-Java%E4%B8%AD%E7%9A%84%E7%BC%96%E7%A0%81%E5%85%A8%E8%A7%A3%E6%9E%90/image-20211118170810025-16372264912411.png" alt="image-20211118170810025"></p>
+</li>
+</ol>
+</li>
+<li><p>UTF16LE和UTF16BE</p>
+<ol>
+<li><p>UTF16LE</p>
+<ol>
+<li>比如： 0x3b正确表示应为 [0x3b, 0x00]</li>
+</ol>
+</li>
+<li><p>UTF16BE</p>
+<ol>
+<li>比如： 0x3b正确表示应为 [0x00, 0x3b]</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="4-Java中的字符表示"><a href="#4-Java中的字符表示" class="headerlink" title="4. Java中的字符表示"></a>4. Java中的字符表示</h2><ol>
+<li><p>java中的字符表示使用的是<strong>UTF16BE</strong></p>
+</li>
+<li><p>参考：Java是如何表示全球字符的  <a target="_blank" rel="noopener" href="https://baijiahao.baidu.com/s?id=1625445987304547169">https://baijiahao.baidu.com/s?id=1625445987304547169</a></p>
+</li>
+<li><p>java中的代码实现</p>
+<ol>
+<li><p>Character类中，又把所有的Unicode字符分别按编码和应用角度来组织子集。</p>
+</li>
+<li><p>UnicodeBlock是Subset的子类，代表Unicode规范中的字符，从编码角度将Unicode划分为若干子集。如：0000-007F 基本拉丁文；属于0号平面。</p>
+</li>
+<li><p>UnicodeScript从应用角度将Unicode划分为若干子集。每一个Unicode只属于唯一一个UnicodeScript。</p>
+</li>
+<li><p>Unicode的每一个字符都是由CodePoint表示的，每个CodePoint都是一个由Unicode标准赋予含义的唯一数字，代表一个唯一的字符。ASCII码包含128个CodePoint，范围是0到7F，扩展ASCII码包含256个CodePoint，范围是0到FF，而Unicode包含1,114,112个CodePoint，范围是0到10FFFF。Unicode码空间划分为17个Unicode字符平面（基本多文种平面，16个辅助平面），每个平面有65,536个CodePoint。因此Unicode码空间总计是17 × 65,536 &#x3D; 1,114,112。</p>
+</li>
+<li><p>问题来了，Java的字符类型只能表示65,536个字符，那如何表示1,114,112个字符？</p>
+</li>
+<li><p>那要从Java的历史谈起。早期 Java 版本使用 16 位 char 数据类型表示 Unicode 字符。这种设计方法早期比较合理，因为所有 Unicode 字符拥有的值都小于 65,535 (0xFFFF)，可以通过 16 位表示。但是，Unicode 后来将最大值增加到 1,114,111 (0x10FFFF)。由于 16 位太小，不能表示 Unicode version 3.1 中的所有 Unicode 字符，因此引入了UTF-32 编码模式。但与 32 位值相比，16 位值的内存使用效率更高，因此 Unicode 引入了一种新设计方法来允许继续使用 16 位值。UTF-16 中采用的这种设计方法是在65,536个字符中分配 1,024个值给 16 位高代理（high surrogate），再分配1,024个值分配给 16 位低代理（low surrogate）。它使用一个高代理加上一个低代理组成一个代理对（surrogate pair）来表示65,536 (0x10000) 和 1,114,111 (0x10FFFF) 之间的 1,048,576个字符，即增加了1024 * 1024个字符。因此要大于65535个字符，需要引入surrogate字符。在代码中：<strong>高位代理区间：D800~DBFF</strong>， <strong>低位代理区间：DC00~DFFF</strong>。</p>
+<p><img src="/./assets/2021-11-16-Java%E4%B8%AD%E7%9A%84%E7%BC%96%E7%A0%81%E5%85%A8%E8%A7%A3%E6%9E%90/u=1340978440,3296528546&fm=173&app=49&f=JPEG.jpeg" alt="img"></p>
+<p><img src="/./assets/2021-11-16-Java%E4%B8%AD%E7%9A%84%E7%BC%96%E7%A0%81%E5%85%A8%E8%A7%A3%E6%9E%90/u=832033699,3074419457&fm=173&app=49&f=JPEG.jpeg" alt="img"></p>
+</li>
+<li><p>以上判读字符是高位代理区间，还是低位代理区间。</p>
+</li>
+<li><p>高位代理char+低位代理char &lt;&#x3D;&gt; CodePoint</p>
+<p><img src="/./assets/2021-11-16-Java%E4%B8%AD%E7%9A%84%E7%BC%96%E7%A0%81%E5%85%A8%E8%A7%A3%E6%9E%90/u=3143136557,1254776382&fm=173&app=49&f=JPEG.jpeg" alt="img"></p>
+</li>
+<li><p>这样，65,536 (0x10000) 和 1,114,111 (0x10FFFF) 之间的 1,048,576个字符就可以使用两个特殊的char代替。</p>
+</li>
+</ol>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://qota.top">Never</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://qota.top/2021/11/16/Java%E4%B8%AD%E7%9A%84%E7%BC%96%E7%A0%81%E5%85%A8%E8%A7%A3%E6%9E%90/">https://qota.top/2021/11/16/Java%E4%B8%AD%E7%9A%84%E7%BC%96%E7%A0%81%E5%85%A8%E8%A7%A3%E6%9E%90/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%8D%9A%E5%AE%A2-Java-%E7%BC%96%E7%A0%81-UTF8-%E4%B8%87%E5%9B%BD%E7%A0%81-UTF16-UTF32/">博客 Java 编码 UTF8 万国码 UTF16 UTF32</a></div><div class="post_share"><div class="social-share" data-image="https://pic.zenvia.top/picgo/blog_avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/11/29/apache-cxf3_3_1%E9%9B%86%E6%88%90springboot2_1_3/" title="apache-cxf3_3_1集成springboot2_1_3"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">apache-cxf3_3_1集成springboot2_1_3</div></div></a></div><div class="next-post pull-right"><a href="/2021/03/23/%E9%AA%8C%E8%AF%81JVM%E6%8E%A5%E5%8F%A3%E5%88%9D%E5%A7%8B%E5%8C%96%E6%97%B6%E6%9C%BA/" title="验证JVM接口初始化时机"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">验证JVM接口初始化时机</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Never</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yeslsl/"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">My Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%BC%96%E7%A0%81%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">1. 为什么要编码？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%96%E7%A0%81%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">2. 什么是编码？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%BC%96%E7%A0%81%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%8F%8A%E5%88%86%E7%B1%BB"><span class="toc-number">3.</span> <span class="toc-text">3. 编码的表示及分类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Java%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E8%A1%A8%E7%A4%BA"><span class="toc-number">4.</span> <span class="toc-text">4. Java中的字符表示</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%BA%8C%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第二篇博客">我的第二篇博客</a><time datetime="2023-07-20T03:56:37.000Z" title="Created 2023-07-20 11:56:37">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第一篇博客">我的第一篇博客</a><time datetime="2023-07-20T03:51:40.000Z" title="Created 2023-07-20 11:51:40">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/13/%E5%A4%96%E8%AE%BE%E6%8E%A5%E5%8F%A3-%E5%8D%8F%E8%AE%AE-%E6%80%BB%E7%BA%BF/" title="外设接口-协议-总线">外设接口-协议-总线</a><time datetime="2021-12-12T16:00:00.000Z" title="Created 2021-12-13 00:00:00">2021-12-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/01/BlockingQueue%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/" title="BlockingQueue阻塞队列">BlockingQueue阻塞队列</a><time datetime="2021-11-30T16:00:00.000Z" title="Created 2021-12-01 00:00:00">2021-12-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/11/29/apache-cxf3_3_1%E9%9B%86%E6%88%90springboot2_1_3/" title="apache-cxf3_3_1集成springboot2_1_3">apache-cxf3_3_1集成springboot2_1_3</a><time datetime="2021-11-28T16:00:00.000Z" title="Created 2021-11-29 00:00:00">2021-11-29</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Never</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

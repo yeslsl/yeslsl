@@ -1,0 +1,241 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>验证JVM接口初始化时机 | Never</title><meta name="author" content="Never"><meta name="copyright" content="Never"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="验证JVM接口初始化时机首先说明一下JVM规定所有JVM实现需要遵循的初始化规则： 类或接口的加载过程  加载-&gt;加载class二进制文件到内存  ​	加载.class文件的方式 ： ​		- 从本地系统中直接加载  ​		- 通过网络下载.class文件     - 从zip，jar等归档文件中加载.class文件 	  ​		- 从专有数据库中提取.class文件 ​		- 将Java源">
+<meta property="og:type" content="article">
+<meta property="og:title" content="验证JVM接口初始化时机">
+<meta property="og:url" content="https://qota.top/2021/03/23/%E9%AA%8C%E8%AF%81JVM%E6%8E%A5%E5%8F%A3%E5%88%9D%E5%A7%8B%E5%8C%96%E6%97%B6%E6%9C%BA/index.html">
+<meta property="og:site_name" content="Never">
+<meta property="og:description" content="验证JVM接口初始化时机首先说明一下JVM规定所有JVM实现需要遵循的初始化规则： 类或接口的加载过程  加载-&gt;加载class二进制文件到内存  ​	加载.class文件的方式 ： ​		- 从本地系统中直接加载  ​		- 通过网络下载.class文件     - 从zip，jar等归档文件中加载.class文件 	  ​		- 从专有数据库中提取.class文件 ​		- 将Java源">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://pic.zenvia.top/picgo/blog_avatar.png">
+<meta property="article:published_time" content="2021-03-22T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-07-25T04:53:05.150Z">
+<meta property="article:author" content="Never">
+<meta property="article:tag" content="JVM Java 初始化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.zenvia.top/picgo/blog_avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qota.top/2021/03/23/%E9%AA%8C%E8%AF%81JVM%E6%8E%A5%E5%8F%A3%E5%88%9D%E5%A7%8B%E5%8C%96%E6%97%B6%E6%9C%BA/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '验证JVM接口初始化时机',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-07-25 12:53:05'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Never"><span class="site-name">Never</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">验证JVM接口初始化时机</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-03-22T16:00:00.000Z" title="Created 2021-03-23 00:00:00">2021-03-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-07-25T04:53:05.150Z" title="Updated 2023-07-25 12:53:05">2023-07-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="验证JVM接口初始化时机"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="验证JVM接口初始化时机"><a href="#验证JVM接口初始化时机" class="headerlink" title="验证JVM接口初始化时机"></a>验证JVM接口初始化时机</h2><p>首先说明一下JVM规定所有JVM实现需要遵循的初始化规则：</p>
+<p><strong>类或接口的加载过程</strong></p>
+<ol>
+<li><strong>加载-&gt;加载class二进制文件到内存</strong></li>
+</ol>
+<p>​	<strong>加载.class文件的方式</strong> ：</p>
+<p>​		- 从本地系统中直接加载 </p>
+<p>​		- 通过网络下载.class文件</p>
+<pre><code>    - 从zip，jar等归档文件中加载.class文件 	
+</code></pre>
+<p>​		- 从专有数据库中提取.class文件</p>
+<p>​		- 将Java源文件<strong>动态</strong>编译为.class文件 （<strong>动态代理、jsp</strong>）</p>
+<ol start="2">
+<li><strong>连接</strong></li>
+</ol>
+<p>​		2.1 验证： 验证加载的二进制文件的准确性</p>
+<p>​		2.2 准备：为静态变量分配内存， 并将其初始化为默认值</p>
+<p>​		2.3 解析： 把类中的符号引用转为直接引用</p>
+<ol start="3">
+<li><strong>初始化</strong></li>
+</ol>
+<p>​		<strong>为类或接口的静态变量赋值为正确值，以及执行静态代码块</strong></p>
+<p>我们需要重点关注的是第三步， <strong>初始化</strong>。</p>
+<p>首先说明一点， <em><strong>JVM规定</strong></em>： 在<strong>每个</strong>Java虚拟机的实现中， 每个<strong>类或接口</strong>必须在 “<strong>首次主动使用时</strong>” 初始化。</p>
+<p>下面说下<strong>主动使用</strong>的场景：</p>
+<ol>
+<li>创建<strong>类</strong>实例；</li>
+<li>访问某个<strong>类或接口</strong>的静态变量， 或对其赋值；</li>
+<li>访问某个<strong>类</strong>的静态方法；</li>
+<li>反射；</li>
+<li>初始化一个<strong>类</strong>的子类， 则<strong>该类</strong>也必须初始化， <em><strong>接口无此限制</strong></em>； （<strong>重点验证接口</strong>）</li>
+<li>JVM启动时被表名为启动类的<strong>类</strong>（main方法类）；</li>
+<li>动态语言的支持。</li>
+</ol>
+<p>在验证第5点之前， 首先说明几个<strong>被动使用不需要初始化</strong>的场景：</p>
+<ol>
+<li><strong>某个引用类型的数组的创建：</strong></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Student[] ss = <span class="keyword">new</span> <span class="title class_">Student</span>[<span class="number">10</span>]; <span class="comment">// 此时Student类并没有进行初始化， 此情况不属于主动使用的场景。</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>通过子类引用父类的静态字段，不会导致子类初始化</strong></li>
+<li><strong>使用类中的final常量，不会触发类的初始化</strong></li>
+</ol>
+<p>下面重点说明<strong>第5点</strong>中有关<strong>接口</strong>的<strong>初始化时机</strong>：</p>
+<p>因为接口不能像类那样， 可以定义静态代码块来<strong>直观地展示是否初始化</strong>（初始化就是对静态内容赋正确值以及执行静态代码块），所以接口需要特殊设计。 我们可以定义一个int变量e, 将其赋值为 <strong>2&#x2F;0</strong> （因为在初始化之前， <strong>e</strong>的值并不是2&#x2F;0, 所以<strong>编译不会出问题</strong>）; 因为接口定义的变量 都是 <em><strong>public static</strong></em> 的， <strong>如果接口被初始化， 则静态的变量a会被赋值 2&#x2F;0， 则会抛出异常</strong>， 以此来判断接口是否初始化。</p>
+<p>代码如下：</p>
+<p><strong>片段一</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> me.sealer.init;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.UUID;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">InitTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        System.out.println(Son.pa);</span><br><span class="line"><span class="comment">//        System.out.println(Son.pb);</span></span><br><span class="line"><span class="comment">//        System.out.println(Son.sa);</span></span><br><span class="line"><span class="comment">//        System.out.println(Son.sb);</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Parent</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">pa</span> <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">pb</span> <span class="operator">=</span> UUID.randomUUID().toString();</span><br><span class="line">    <span class="type">int</span> <span class="variable">pc</span> <span class="operator">=</span> <span class="number">2</span> / <span class="number">0</span>; <span class="comment">// 抛出异常代表Parent进行了初始化</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Son</span> <span class="keyword">extends</span> <span class="title class_">Parent</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">sa</span> <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">sb</span> <span class="operator">=</span> UUID.randomUUID().toString();</span><br><span class="line">    <span class="type">int</span> <span class="variable">sc</span> <span class="operator">=</span> <span class="number">2</span> / <span class="number">0</span>; <span class="comment">// 抛出异常代表Son进行了初始化</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述片段输出为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>此片段说明： 子接口调用父接口静态<strong>非常量</strong>（非final）变量， <strong>父接口会初始化， 子接口不会初始化</strong>。</p>
+<p><strong>片段二 - 1</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> me.sealer.init;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.UUID;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">InitTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line"><span class="comment">//        System.out.println(Son.pa);</span></span><br><span class="line">        System.out.println(Son.pb);</span><br><span class="line"><span class="comment">//        System.out.println(Son.sa);</span></span><br><span class="line"><span class="comment">//        System.out.println(Son.sb);</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Parent</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">pa</span> <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">pb</span> <span class="operator">=</span> UUID.randomUUID().toString();</span><br><span class="line">    <span class="type">int</span> <span class="variable">pc</span> <span class="operator">=</span> <span class="number">2</span> / <span class="number">0</span>; <span class="comment">// 抛出异常代表Parent进行了初始化</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Son</span> <span class="keyword">extends</span> <span class="title class_">Parent</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">sa</span> <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">sb</span> <span class="operator">=</span> UUID.randomUUID().toString();</span><br><span class="line"><span class="comment">//    int sc = 2 / 0; // 抛出异常代表Son进行了初始化</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述片段输出为：(<strong>此输出证明了父接口进行了初始化</strong>)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread <span class="string">&quot;main&quot;</span> java.lang.ExceptionInInitializerError</span><br><span class="line">	at me.sealer.init.InitTest.main(InitTest.java:<span class="number">8</span>)</span><br><span class="line">Caused by: java.lang.ArithmeticException: / by zero</span><br><span class="line">	at me.sealer.init.Parent.&lt;clinit&gt;(InitTest.java:<span class="number">17</span>)</span><br><span class="line">	... <span class="number">1</span> more</span><br></pre></td></tr></table></figure>
+
+<p><strong>片段二 - 2</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> me.sealer.init;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.UUID;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">InitTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line"><span class="comment">//        System.out.println(Son.pa);</span></span><br><span class="line">        System.out.println(Son.pb);</span><br><span class="line"><span class="comment">//        System.out.println(Son.sa);</span></span><br><span class="line"><span class="comment">//        System.out.println(Son.sb);</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Parent</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">pa</span> <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">pb</span> <span class="operator">=</span> UUID.randomUUID().toString();</span><br><span class="line"><span class="comment">//    int pc = 2 / 0; // 抛出异常代表Parent进行了初始化</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Son</span> <span class="keyword">extends</span> <span class="title class_">Parent</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">sa</span> <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">sb</span> <span class="operator">=</span> UUID.randomUUID().toString();</span><br><span class="line">    <span class="type">int</span> <span class="variable">sc</span> <span class="operator">=</span> <span class="number">2</span> / <span class="number">0</span>; <span class="comment">// 抛出异常代表Son进行了初始化</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述片段输出为：(<strong>此输出证明了子接口没有初始化</strong>)  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">92b53aea-<span class="number">6247</span>-<span class="number">4952</span>-b5bc-49a27aea0ec1</span><br></pre></td></tr></table></figure>
+<p>注意<strong>片段二-1</strong>和<strong>片段二-2</strong> 的 <strong>line17</strong>和<strong>line23</strong>的区别。</p>
+<p>上述<strong>两个</strong>片段说明： 子接口调用父接口的<strong>静态非常量</strong>， 并<strong>不会触发子接口的初始化</strong></p>
+<p><strong>片段三</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> me.sealer.init;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.UUID;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">InitTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line"><span class="comment">//        System.out.println(Son.pa);</span></span><br><span class="line"><span class="comment">//        System.out.println(Son.pb);</span></span><br><span class="line">        System.out.println(Son.sa);</span><br><span class="line"><span class="comment">//        System.out.println(Son.sb);</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Parent</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">pa</span> <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">pb</span> <span class="operator">=</span> UUID.randomUUID().toString();</span><br><span class="line">    <span class="type">int</span> <span class="variable">pc</span> <span class="operator">=</span> <span class="number">2</span> / <span class="number">0</span>; <span class="comment">// 抛出异常代表Parent进行了初始化</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Son</span> <span class="keyword">extends</span> <span class="title class_">Parent</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">sa</span> <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">sb</span> <span class="operator">=</span> UUID.randomUUID().toString();</span><br><span class="line"><span class="comment">//    int sc = 2 / 0; // 抛出异常代表Son进行了初始化</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述片段输出为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>此片段说明： <em><strong>子接口初始化， 父接口不会初始化</strong></em></p>
+<p><strong>片段四</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> me.sealer.init;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.UUID;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">InitTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line"><span class="comment">//        System.out.println(Son.pa);</span></span><br><span class="line"><span class="comment">//        System.out.println(Son.pb);</span></span><br><span class="line"><span class="comment">//        System.out.println(Son.sa);</span></span><br><span class="line">        System.out.println(Son.sb);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Parent</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">pa</span> <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">pb</span> <span class="operator">=</span> UUID.randomUUID().toString();</span><br><span class="line">    <span class="type">int</span> <span class="variable">pc</span> <span class="operator">=</span> <span class="number">2</span> / <span class="number">0</span>; <span class="comment">// 抛出异常代表Parent进行了初始化</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Son</span> <span class="keyword">extends</span> <span class="title class_">Parent</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">sa</span> <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">sb</span> <span class="operator">=</span> UUID.randomUUID().toString();</span><br><span class="line"><span class="comment">//    int sc = 2 / 0; // 抛出异常代表Son进行了初始化</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述片段输出为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">d23be5b2-a9d0-4f74-a600-023b34e448e1</span><br></pre></td></tr></table></figure>
+
+<p>此片段说明： <em><strong>子接口初始化， 父接口不一定初始化</strong></em></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://qota.top">Never</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://qota.top/2021/03/23/%E9%AA%8C%E8%AF%81JVM%E6%8E%A5%E5%8F%A3%E5%88%9D%E5%A7%8B%E5%8C%96%E6%97%B6%E6%9C%BA/">https://qota.top/2021/03/23/%E9%AA%8C%E8%AF%81JVM%E6%8E%A5%E5%8F%A3%E5%88%9D%E5%A7%8B%E5%8C%96%E6%97%B6%E6%9C%BA/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/JVM-Java-%E5%88%9D%E5%A7%8B%E5%8C%96/">JVM Java 初始化</a></div><div class="post_share"><div class="social-share" data-image="https://pic.zenvia.top/picgo/blog_avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/11/16/Java%E4%B8%AD%E7%9A%84%E7%BC%96%E7%A0%81%E5%85%A8%E8%A7%A3%E6%9E%90/" title="Java中的编码全解析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Java中的编码全解析</div></div></a></div><div class="next-post pull-right"><a href="/2020/12/24/Java8%E4%B9%8BJSR310%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E7%B1%BB/" title="_Java8之JSR310日期时间类"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">_Java8之JSR310日期时间类</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Never</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yeslsl/"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">My Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81JVM%E6%8E%A5%E5%8F%A3%E5%88%9D%E5%A7%8B%E5%8C%96%E6%97%B6%E6%9C%BA"><span class="toc-number">1.</span> <span class="toc-text">验证JVM接口初始化时机</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%BA%8C%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第二篇博客">我的第二篇博客</a><time datetime="2023-07-20T03:56:37.000Z" title="Created 2023-07-20 11:56:37">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第一篇博客">我的第一篇博客</a><time datetime="2023-07-20T03:51:40.000Z" title="Created 2023-07-20 11:51:40">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/13/%E5%A4%96%E8%AE%BE%E6%8E%A5%E5%8F%A3-%E5%8D%8F%E8%AE%AE-%E6%80%BB%E7%BA%BF/" title="外设接口-协议-总线">外设接口-协议-总线</a><time datetime="2021-12-12T16:00:00.000Z" title="Created 2021-12-13 00:00:00">2021-12-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/01/BlockingQueue%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/" title="BlockingQueue阻塞队列">BlockingQueue阻塞队列</a><time datetime="2021-11-30T16:00:00.000Z" title="Created 2021-12-01 00:00:00">2021-12-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/11/29/apache-cxf3_3_1%E9%9B%86%E6%88%90springboot2_1_3/" title="apache-cxf3_3_1集成springboot2_1_3">apache-cxf3_3_1集成springboot2_1_3</a><time datetime="2021-11-28T16:00:00.000Z" title="Created 2021-11-29 00:00:00">2021-11-29</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Never</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

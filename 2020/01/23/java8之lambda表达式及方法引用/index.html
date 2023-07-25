@@ -1,0 +1,481 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>java8之lambda表达式及方法引用 | Never</title><meta name="author" content="Never"><meta name="copyright" content="Never"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="java8中的函数式接口FunctionalInterface　　函数式接口(Functional Interface)，就是有且仅有一个抽象方法，但是可以有多个非抽象方法的接口。**lambda表达式和方法引用，都是函数式接口的一种具体实现。** 函数式接口可以包含的方法　　1. 默认方法。 　　2. 静态方法。 　　3. java.lang.Object 里的public方法。 　　getCl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java8之lambda表达式及方法引用">
+<meta property="og:url" content="https://qota.top/2020/01/23/java8%E4%B9%8Blambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8F%8A%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8/index.html">
+<meta property="og:site_name" content="Never">
+<meta property="og:description" content="java8中的函数式接口FunctionalInterface　　函数式接口(Functional Interface)，就是有且仅有一个抽象方法，但是可以有多个非抽象方法的接口。**lambda表达式和方法引用，都是函数式接口的一种具体实现。** 函数式接口可以包含的方法　　1. 默认方法。 　　2. 静态方法。 　　3. java.lang.Object 里的public方法。 　　getCl">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://on2171g4d.bkt.clouddn.com/jekyll-banner.png">
+<meta property="article:published_time" content="2020-01-22T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-04-19T02:42:25.000Z">
+<meta property="article:author" content="Never">
+<meta property="article:tag" content="java java8 lambda 方法引用 method reference">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://on2171g4d.bkt.clouddn.com/jekyll-banner.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qota.top/2020/01/23/java8%E4%B9%8Blambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8F%8A%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'java8之lambda表达式及方法引用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-04-19 10:42:25'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('http://on2171g4d.bkt.clouddn.com/jekyll-banner.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Never"><span class="site-name">Never</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">java8之lambda表达式及方法引用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2020-01-22T16:00:00.000Z" title="Created 2020-01-23 00:00:00">2020-01-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-04-19T02:42:25.000Z" title="Updated 2021-04-19 10:42:25">2021-04-19</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="java8之lambda表达式及方法引用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="java8中的函数式接口FunctionalInterface"><a href="#java8中的函数式接口FunctionalInterface" class="headerlink" title="java8中的函数式接口FunctionalInterface"></a>java8中的函数式接口FunctionalInterface</h2><p>　　函数式接口(Functional Interface)，就是有且仅有一个抽象方法，但是可以有多个<br>非抽象方法的接口。**<em>lambda表达式和方法引用，都是函数式接口的一种具体实现。</em>**</p>
+<h3 id="函数式接口可以包含的方法"><a href="#函数式接口可以包含的方法" class="headerlink" title="函数式接口可以包含的方法"></a>函数式接口可以包含的方法</h3><p>　　1. 默认方法。</p>
+<p>　　2. 静态方法。</p>
+<p>　　3. java.lang.Object 里的public方法。</p>
+<p>　　getClass hashCode equals toString notify　notifyAll wait wait wait这几个为public方法。</p>
+<p>　　registerNatives为私有方法，clone和finalize为protected方法。</p>
+<h3 id="java中提供的函数式接口"><a href="#java中提供的函数式接口" class="headerlink" title="java中提供的函数式接口"></a>java中提供的函数式接口</h3><p>　　java8中提供了很多预定义的函数式接口，能满足绝大多数情况的开发。如果<br>不满足自己的场景， 可以自己定义相应的函数式接口。</p>
+<p>　　java8之前就存在的函数式接口：</p>
+<table>
+<thead>
+<tr>
+<th align="center">接口名</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">java.lang.Runnable</td>
+</tr>
+<tr>
+<td align="center">java.util.concurrent.Callable</td>
+</tr>
+<tr>
+<td align="center">java.security.PrivilegedAction</td>
+</tr>
+<tr>
+<td align="center">java.util.Comparator</td>
+</tr>
+<tr>
+<td align="center">java.io.FileFilter</td>
+</tr>
+<tr>
+<td align="center">java.nio.file.PathMatcher</td>
+</tr>
+<tr>
+<td align="center">java.lang.reflect.InvocationHandler</td>
+</tr>
+<tr>
+<td align="center">java.beans.PropertyChangeListener</td>
+</tr>
+<tr>
+<td align="center">java.awt.event.ActionListener</td>
+</tr>
+<tr>
+<td align="center">javax.swing.event.ChangeListener</td>
+</tr>
+</tbody></table>
+<p>　　java8新增的函数式接口：</p>
+<table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th align="center">接口名</th>
+<th align="center">接口描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">BiConsumer&lt;T,U&gt;</td>
+<td align="center">代表了一个接受两个输入参数的操作，并且不返回任何结果</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">BiFunction&lt;T,U,R&gt;</td>
+<td align="center">代表了一个接受两个输入参数的操作，并且返回一个结果</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">BinaryOperator&lt;T&gt;</td>
+<td align="center">代表了一个作用于于两个同类型操作数的操作，并且返回了同类型结果，BiFunction的子接口</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">BiPredicate&lt;T,U&gt;</td>
+<td align="center">代表了一个两个参数的boolean值方法</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">BooleanSupplier</td>
+<td align="center">代表了boolean值结果的提供方</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">Consumer&lt;T&gt;</td>
+<td align="center">代表了接受一个输入参数并且无返回的操作</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td align="center">DoubleBinaryOperator</td>
+<td align="center">代表了作用于两个double值操作符的操作，并且返回了一个double值的结果。</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td align="center">DoubleConsumer</td>
+<td align="center">代表一个接受double值参数的操作，并且不返回结果。</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="center">DoubleFunction&lt;R&gt;</td>
+<td align="center">代表接受一个double值参数的方法，并且返回结果</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="center">DoublePredicate</td>
+<td align="center">代表一个拥有double值参数的boolean值方法</td>
+</tr>
+<tr>
+<td align="center">11</td>
+<td align="center">DoubleSupplier</td>
+<td align="center">代表一个double值结果的提供方</td>
+</tr>
+<tr>
+<td align="center">12</td>
+<td align="center">DoubleToIntFunction</td>
+<td align="center">接受一个double类型输入，返回一个int类型结果。</td>
+</tr>
+<tr>
+<td align="center">13</td>
+<td align="center">DoubleToLongFunction</td>
+<td align="center">接受一个double类型输入，返回一个long类型结果</td>
+</tr>
+<tr>
+<td align="center">14</td>
+<td align="center">DoubleUnaryOperator</td>
+<td align="center">接受一个参数同为类型double,返回值类型也为double 。</td>
+</tr>
+<tr>
+<td align="center">15</td>
+<td align="center">Function&lt;T,R&gt;</td>
+<td align="center">接受一个输入参数，返回一个结果。</td>
+</tr>
+<tr>
+<td align="center">16</td>
+<td align="center">IntBinaryOperator</td>
+<td align="center">接受两个参数同为类型int,返回值类型也为int 。</td>
+</tr>
+<tr>
+<td align="center">17</td>
+<td align="center">IntConsumer</td>
+<td align="center">接受一个int类型的输入参数，无返回值 。</td>
+</tr>
+<tr>
+<td align="center">18</td>
+<td align="center">IntFunction&lt;R&gt;</td>
+<td align="center">接受一个int类型输入参数，返回一个结果 。</td>
+</tr>
+<tr>
+<td align="center">19</td>
+<td align="center">IntPredicate</td>
+<td align="center">：接受一个int输入参数，返回一个布尔值的结果。</td>
+</tr>
+<tr>
+<td align="center">20</td>
+<td align="center">IntSupplier</td>
+<td align="center">无参数，返回一个int类型结果。</td>
+</tr>
+<tr>
+<td align="center">21</td>
+<td align="center">IntToDoubleFunction</td>
+<td align="center">接受一个int类型输入，返回一个double类型结果 。</td>
+</tr>
+<tr>
+<td align="center">22</td>
+<td align="center">IntToLongFunction</td>
+<td align="center">接受一个int类型输入，返回一个long类型结果。</td>
+</tr>
+<tr>
+<td align="center">23</td>
+<td align="center">IntUnaryOperator</td>
+<td align="center">接受一个参数同为类型int,返回值类型也为int 。</td>
+</tr>
+<tr>
+<td align="center">24</td>
+<td align="center">LongBinaryOperator</td>
+<td align="center">接受两个参数同为类型long,返回值类型也为long。</td>
+</tr>
+<tr>
+<td align="center">25</td>
+<td align="center">LongConsumer</td>
+<td align="center">接受一个long类型的输入参数，无返回值。</td>
+</tr>
+<tr>
+<td align="center">26</td>
+<td align="center">LongFunction&lt;R&gt;</td>
+<td align="center">接受一个long类型输入参数，返回一个结果。</td>
+</tr>
+<tr>
+<td align="center">27</td>
+<td align="center">LongPredicate</td>
+<td align="center">R接受一个long输入参数，返回一个布尔值类型结果。</td>
+</tr>
+<tr>
+<td align="center">28</td>
+<td align="center">LongSupplier</td>
+<td align="center">无参数，返回一个结果long类型的值。</td>
+</tr>
+<tr>
+<td align="center">29</td>
+<td align="center">LongToDoubleFunction</td>
+<td align="center">接受一个long类型输入，返回一个double类型结果。</td>
+</tr>
+<tr>
+<td align="center">30</td>
+<td align="center">LongToIntFunction</td>
+<td align="center">接受一个long类型输入，返回一个int类型结果。</td>
+</tr>
+<tr>
+<td align="center">31</td>
+<td align="center">LongUnaryOperator</td>
+<td align="center">接受一个参数同为类型long,返回值类型也为long。</td>
+</tr>
+<tr>
+<td align="center">32</td>
+<td align="center">ObjDoubleConsumer&lt;T&gt;</td>
+<td align="center">接受一个object类型和一个double类型的输入参数，无返回值。</td>
+</tr>
+<tr>
+<td align="center">33</td>
+<td align="center">ObjIntConsumer&lt;T&gt;</td>
+<td align="center">接受一个object类型和一个int类型的输入参数，无返回值。</td>
+</tr>
+<tr>
+<td align="center">34</td>
+<td align="center">ObjLongConsumer&lt;T&gt;</td>
+<td align="center">接受一个object类型和一个long类型的输入参数，无返回值。</td>
+</tr>
+<tr>
+<td align="center">35</td>
+<td align="center">Predicate&lt;T&gt;</td>
+<td align="center">接受一个输入参数，返回一个布尔值结果。</td>
+</tr>
+<tr>
+<td align="center">36</td>
+<td align="center">Supplier&lt;T&gt;</td>
+<td align="center">无参数，返回一个结果。</td>
+</tr>
+<tr>
+<td align="center">37</td>
+<td align="center">ToDoubleBiFunction&lt;T,U&gt;</td>
+<td align="center">接受两个输入参数，返回一个double类型结果</td>
+</tr>
+<tr>
+<td align="center">38</td>
+<td align="center">ToDoubleFunction&lt;T&gt;</td>
+<td align="center">接受一个输入参数，返回一个double类型结果</td>
+</tr>
+<tr>
+<td align="center">39</td>
+<td align="center">ToIntBiFunction&lt;T,U&gt;</td>
+<td align="center">接受两个输入参数，返回一个int类型结果。</td>
+</tr>
+<tr>
+<td align="center">40</td>
+<td align="center">ToIntFunction&lt;T&gt;</td>
+<td align="center">接受一个输入参数，返回一个int类型结果。</td>
+</tr>
+<tr>
+<td align="center">41</td>
+<td align="center">ToLongBiFunction&lt;T,U&gt;</td>
+<td align="center">接受两个输入参数，返回一个long类型结果。</td>
+</tr>
+<tr>
+<td align="center">42</td>
+<td align="center">ToLongFunction&lt;T&gt;</td>
+<td align="center">接受一个输入参数，返回一个long类型结果。</td>
+</tr>
+<tr>
+<td align="center">43</td>
+<td align="center">UnaryOperator&lt;T&gt;</td>
+<td align="center">接受一个参数为类型T,返回值类型也为T。</td>
+</tr>
+</tbody></table>
+<h2 id="java8中的lambda表达式"><a href="#java8中的lambda表达式" class="headerlink" title="java8中的lambda表达式"></a>java8中的lambda表达式</h2><p>　　lambda表达式是java8很重要的一个新特性， 其语法为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(param1, param2, ...) -&gt; expression</span><br><span class="line"></span><br><span class="line">或：</span><br><span class="line"></span><br><span class="line">(param1, param2, ...) -&gt; &#123;</span><br><span class="line">    statement1;</span><br><span class="line">    statement2;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>　　其中，params的类型已经省略了，编译器可以自行判断(如何判断？)。如果没有参数， 只写一个<br>()即可；如果只有一个参数()可以省略；两个参数及以上， 不可简写。归纳如下：</p>
+<ul>
+<li>可选类型声明：不需要声明参数类型，编译器可以统一识别参数值。</li>
+<li>可选的参数圆括号：一个参数无需定义圆括号，但多个参数或无参数需要定义圆括号。</li>
+<li>可选的大括号：如果主体包含了一个语句，就不需要使用大括号。</li>
+<li>可选的返回关键字：如果主体只有一个表达式且有返回值，则编译器会自动返回该返回值，<br>大括号则需要指明要返回的值。</li>
+</ul>
+<p>　　lambda表达式示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 不需要参数,返回值为 5  </span></span><br><span class="line">() -&gt; <span class="number">5</span>  </span><br><span class="line">  </span><br><span class="line"><span class="comment">// 2. 接收一个参数(数字类型),返回其2倍的值  </span></span><br><span class="line">x -&gt; <span class="number">2</span> * x  </span><br><span class="line">  </span><br><span class="line"><span class="comment">// 3. 接受2个参数(数字),并返回他们的差值  </span></span><br><span class="line">(x, y) -&gt; x – y  </span><br><span class="line">  </span><br><span class="line"><span class="comment">// 4. 接收2个int型整数,返回他们的和  </span></span><br><span class="line">(<span class="type">int</span> x, <span class="type">int</span> y) -&gt; x + y  </span><br><span class="line">  </span><br><span class="line"><span class="comment">// 5. 接受一个 string 对象,并在控制台打印,不返回任何值(看起来像是返回void)  </span></span><br><span class="line">(String s) -&gt; System.out.println(s)</span><br></pre></td></tr></table></figure>
+
+<h3 id="lambda表达式的特点"><a href="#lambda表达式的特点" class="headerlink" title="lambda表达式的特点"></a>lambda表达式的特点</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><p>　　Lambda 表达式免去了使用匿名方法的麻烦，<br>并且给予Java简单但是强大的函数化的编程能力。</p>
+<h4 id="变量作用域"><a href="#变量作用域" class="headerlink" title="变量作用域"></a>变量作用域</h4><ul>
+<li>lambda 表达式只能引用标记了 final 的外层局部变量及成员变量，<br>这就是说不能在 lambda 内部修改定义在域外的变量，否则会编译错误。</li>
+<li>lambda 表达式的局部变量可以不用声明为 final，<br>但是必须不可被后面的代码修改（即隐性的具有 final 的语义）</li>
+<li>在 Lambda 表达式当中不允许声明一个与外层局部变量同名的lambda参数或者lambda域内局部变量。</li>
+</ul>
+<h2 id="java8的方法引用-Method-Reference"><a href="#java8的方法引用-Method-Reference" class="headerlink" title="java8的方法引用 Method Reference"></a>java8的方法引用 Method Reference</h2><p>　　java8的方法引用共分以下四种情况：</p>
+<h3 id="1-同一个类的任意对象的方法引用。"><a href="#1-同一个类的任意对象的方法引用。" class="headerlink" title="1. 同一个类的任意对象的方法引用。"></a>1. 同一个类的任意对象的方法引用。</h3><p> 　　示例：String::equals. 对应函数式接口：BiPredicate.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">BiPredicate</span>&lt;T, U&gt; &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Evaluates this predicate on the given arguments.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> t the first input argument</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> u the second input argument</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> &#123;<span class="doctag">@code</span> true&#125; if the input arguments match the predicate,</span></span><br><span class="line"><span class="comment">     * otherwise &#123;<span class="doctag">@code</span> false&#125;</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">test</span><span class="params">(T t, U u)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.BiPredicate;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MethodReferenceTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">aEqualsB</span> <span class="operator">=</span> equals(<span class="string">&quot;aaa&quot;</span>, <span class="string">&quot;AAA&quot;</span>, String::equals);</span><br><span class="line">        System.out.println(aEqualsB);</span><br><span class="line"></span><br><span class="line">        aEqualsB = equals(<span class="string">&quot;aaa&quot;</span>, <span class="string">&quot;AAA&quot;</span>, String::equalsIgnoreCase);</span><br><span class="line">        System.out.println(aEqualsB);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(String a, String b, BiPredicate&lt;String, String&gt; predicate)</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> predicate.test(a, b);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-静态方法引用"><a href="#2-静态方法引用" class="headerlink" title="2. 静态方法引用"></a>2. 静态方法引用</h3><p>　　示例： Math::pow. 对应函数式接口：BiFunction</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">BiFunction</span>&lt;T, U, R&gt; &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Applies this function to the given arguments.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> t the first function argument</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> u the second function argument</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the function result</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    R <span class="title function_">apply</span><span class="params">(T t, U u)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.BiFunction;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MethodReferenceTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Double</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">4d</span>;</span><br><span class="line">        <span class="type">Double</span> <span class="variable">b</span> <span class="operator">=</span> <span class="number">2d</span>;</span><br><span class="line">        BiFunction&lt;Double, Double, Double&gt; biFunction = Math::pow;</span><br><span class="line">        <span class="type">Double</span> <span class="variable">c</span> <span class="operator">=</span> pow(a, b, biFunction);</span><br><span class="line">        System.out.println(c);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Double <span class="title function_">pow</span><span class="params">(Double a, Double b, BiFunction&lt;Double, Double, Double&gt; biFunction)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> biFunction.apply(a, b);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-特定实例对象的方法引用"><a href="#3-特定实例对象的方法引用" class="headerlink" title="3. 特定实例对象的方法引用"></a>3. 特定实例对象的方法引用</h3><p>　　示例1： System.out::println. 对应函数式接口：Consumer</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Consumer</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Performs this operation on the given argument.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> t the input argument</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">accept</span><span class="params">(T t)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Consumer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MethodReferenceTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">&quot;Hello World.&quot;</span>;</span><br><span class="line">        Consumer&lt;String&gt; consumer = System.out::println;</span><br><span class="line">        print(s, consumer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">print</span><span class="params">(String s, Consumer&lt;String&gt; consumer)</span> &#123;</span><br><span class="line">        consumer.accept(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>　　注意： 此处的实例对象也可以是this或super.</p>
+<p>　　示例2： this::equals. 对应的函数式接口：Predicate</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Predicate</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Evaluates this predicate on the given argument.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> t the input argument</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> &#123;<span class="doctag">@code</span> true&#125; if the input argument matches the predicate,</span></span><br><span class="line"><span class="comment">     * otherwise &#123;<span class="doctag">@code</span> false&#125;</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">test</span><span class="params">(T t)</span>;</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Predicate;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MethodReferenceTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">boolean</span> <span class="variable">equals</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MethodReferenceTest</span>().run();</span><br><span class="line">        System.out.println(equals);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">MethodReferenceTest</span> <span class="variable">test</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MethodReferenceTest</span>();</span><br><span class="line">        Predicate&lt;MethodReferenceTest&gt; predicate = <span class="built_in">this</span>::equals;</span><br><span class="line">        <span class="keyword">return</span> equals(test, predicate);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(MethodReferenceTest s, Predicate&lt;MethodReferenceTest&gt; predicate)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> predicate.test(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-构造方法调用"><a href="#4-构造方法调用" class="headerlink" title="4. 构造方法调用"></a>4. 构造方法调用</h3><p>　　示例：String::new. 对应的函数式接口：Supplier</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Supplier</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Gets a result.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> a result</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    T <span class="title function_">get</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.function.Supplier;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MethodReferenceTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        Supplier&lt;String&gt; supplier = String::<span class="keyword">new</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> supply(supplier);</span><br><span class="line">        System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">supply</span><span class="params">(Supplier&lt;String&gt; supplier)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> supplier.get();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>总结： 每一个方法引用，其实都可以对应到一个函数式接口， 即：方法引用和lambda表达式是对等的。<br>如果想使用方法引用，必须按照该方法的特点(几个入参，几个出参)匹配合适的函数式接口(没有的话就<br>得自己定义)。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://qota.top">Never</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://qota.top/2020/01/23/java8%E4%B9%8Blambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8F%8A%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8/">https://qota.top/2020/01/23/java8%E4%B9%8Blambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8F%8A%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/java-java8-lambda-%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8-method-reference/">java java8 lambda 方法引用 method reference</a></div><div class="post_share"><div class="social-share" data-image="http://on2171g4d.bkt.clouddn.com/jekyll-banner.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/02/20/%E6%AD%BB%E9%94%81%E4%B8%8E%E6%AD%BB%E9%94%81%E5%88%86%E6%9E%90/" title="死锁与死锁分析"><img class="cover" src="http://on2171g4d.bkt.clouddn.com/jekyll-banner.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">死锁与死锁分析</div></div></a></div><div class="next-post pull-right"><a href="/2020/01/06/%E5%BE%85%E6%89%93%E5%8D%A1%E7%9F%A5%E8%AF%86/" title="待打卡知识"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">待打卡知识</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Never</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yeslsl/"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">My Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#java8%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3FunctionalInterface"><span class="toc-number">1.</span> <span class="toc-text">java8中的函数式接口FunctionalInterface</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3%E5%8F%AF%E4%BB%A5%E5%8C%85%E5%90%AB%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">函数式接口可以包含的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#java%E4%B8%AD%E6%8F%90%E4%BE%9B%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.2.</span> <span class="toc-text">java中提供的函数式接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#java8%E4%B8%AD%E7%9A%84lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">java8中的lambda表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E7%89%B9%E7%82%B9"><span class="toc-number">2.1.</span> <span class="toc-text">lambda表达式的特点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">2.1.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-number">2.1.2.</span> <span class="toc-text">变量作用域</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#java8%E7%9A%84%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8-Method-Reference"><span class="toc-number">3.</span> <span class="toc-text">java8的方法引用 Method Reference</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%90%8C%E4%B8%80%E4%B8%AA%E7%B1%BB%E7%9A%84%E4%BB%BB%E6%84%8F%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8%E3%80%82"><span class="toc-number">3.1.</span> <span class="toc-text">1. 同一个类的任意对象的方法引用。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="toc-number">3.2.</span> <span class="toc-text">2. 静态方法引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%89%B9%E5%AE%9A%E5%AE%9E%E4%BE%8B%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="toc-number">3.3.</span> <span class="toc-text">3. 特定实例对象的方法引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8"><span class="toc-number">3.4.</span> <span class="toc-text">4. 构造方法调用</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%BA%8C%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第二篇博客">我的第二篇博客</a><time datetime="2023-07-20T03:56:37.000Z" title="Created 2023-07-20 11:56:37">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第一篇博客">我的第一篇博客</a><time datetime="2023-07-20T03:51:40.000Z" title="Created 2023-07-20 11:51:40">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/13/%E5%A4%96%E8%AE%BE%E6%8E%A5%E5%8F%A3-%E5%8D%8F%E8%AE%AE-%E6%80%BB%E7%BA%BF/" title="外设接口-协议-总线">外设接口-协议-总线</a><time datetime="2021-12-12T16:00:00.000Z" title="Created 2021-12-13 00:00:00">2021-12-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/01/BlockingQueue%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/" title="BlockingQueue阻塞队列">BlockingQueue阻塞队列</a><time datetime="2021-11-30T16:00:00.000Z" title="Created 2021-12-01 00:00:00">2021-12-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/11/29/apache-cxf3_3_1%E9%9B%86%E6%88%90springboot2_1_3/" title="apache-cxf3_3_1集成springboot2_1_3">apache-cxf3_3_1集成springboot2_1_3</a><time datetime="2021-11-28T16:00:00.000Z" title="Created 2021-11-29 00:00:00">2021-11-29</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Never</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

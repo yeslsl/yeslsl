@@ -1,0 +1,185 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>java泛型的PECS原则 | Never</title><meta name="author" content="Never"><meta name="copyright" content="Never"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="PECS　　在泛型编程时，使用部分限定的形参时，&lt;? super T&gt;和&lt;? extends T&gt;的使用场景容易混淆，PECS原则可以帮助我们很好记住它们：提供者（Provider）使用extends，消费者（Consumer）使用super。通俗地说， Provider指的就是该容器从自己的容器里提供T类型或T的子类型的对象供别人使用；Consumer指的就是该容器把从别">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java泛型的PECS原则">
+<meta property="og:url" content="https://qota.top/2020/05/12/java%E6%B3%9B%E5%9E%8B%E7%9A%84PECS%E5%8E%9F%E5%88%99/index.html">
+<meta property="og:site_name" content="Never">
+<meta property="og:description" content="PECS　　在泛型编程时，使用部分限定的形参时，&lt;? super T&gt;和&lt;? extends T&gt;的使用场景容易混淆，PECS原则可以帮助我们很好记住它们：提供者（Provider）使用extends，消费者（Consumer）使用super。通俗地说， Provider指的就是该容器从自己的容器里提供T类型或T的子类型的对象供别人使用；Consumer指的就是该容器把从别">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://pic.zenvia.top/picgo/blog_avatar.png">
+<meta property="article:published_time" content="2020-05-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-07-25T04:54:34.079Z">
+<meta property="article:author" content="Never">
+<meta property="article:tag" content="java 泛型 PECS super extends 消费者 提供者">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.zenvia.top/picgo/blog_avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qota.top/2020/05/12/java%E6%B3%9B%E5%9E%8B%E7%9A%84PECS%E5%8E%9F%E5%88%99/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'java泛型的PECS原则',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-07-25 12:54:34'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Never"><span class="site-name">Never</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">java泛型的PECS原则</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2020-05-11T16:00:00.000Z" title="Created 2020-05-12 00:00:00">2020-05-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-07-25T04:54:34.079Z" title="Updated 2023-07-25 12:54:34">2023-07-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="java泛型的PECS原则"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="PECS"><a href="#PECS" class="headerlink" title="PECS"></a>PECS</h2><p>　　在泛型编程时，使用部分限定的形参时，&lt;? super T&gt;和&lt;? extends T&gt;的使用场景容易混淆，<br>PECS原则可以帮助我们很好记住它们：提供者（Provider）使用extends，消费者（Consumer）<br>使用super。通俗地说， Provider指的就是该容器从自己的容器里提供T类型或T的子类型的对象供别人使用；<br>Consumer指的就是该容器把从别处拿到的T类型或T的子类型的对象放到自己的容器。</p>
+<p>　　<strong><em>为什么需要PECS？</em></strong> 按我自己的理解是：PECS要做的就是实现集合的多态。拿比较容易理解的水果、苹果、红苹果和梨的例子说明下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Fruit</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Apple</span> <span class="keyword">extends</span> <span class="title class_">Fruit</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">RedApple</span> <span class="keyword">extends</span> <span class="title class_">Apple</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Pear</span> <span class="keyword">extends</span> <span class="title class_">Fruit</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>　　上边是水果、苹果、红苹果及梨的类定义。</p>
+<h3 id="PE"><a href="#PE" class="headerlink" title="PE"></a>PE</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Apple&gt; apples = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">List&lt;Fruit&gt; fruits = apples;  <span class="comment">// X 编译不过。</span></span><br></pre></td></tr></table></figure>
+<p>　　上边的代码定义编译是通不过的，因为虽然Fruit是Apple的父类，<br>但是List&lt;Fruit&gt;并不是List&lt;Apple&gt;的父类， 如果想实现类似的效果，可以用如下方式定义：<br> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Apple&gt; apples = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">List&lt;? <span class="keyword">extends</span> <span class="title class_">Fruit</span>&gt; fruits = apples; <span class="comment">// √ 编译通过。</span></span><br></pre></td></tr></table></figure><br> 　　说明， List&lt;Fruit&gt;不是List&lt;Apple&gt;的父类，List&lt;? extends Fruit&gt;才是！</p>
+<p> 　　实际上，List&lt;? extends Fruit&gt;是List&lt;T&gt;的父类！T代表Fruit或Fruit的任一子类。</p>
+<p>　　上述代码的fruits容器是不能继续执行add方法的，即&lt;? extends T&gt; 只能作为provider，执行get方法。<br>因为如果能够执行add方法， 就会造成fruits中的对象不能确定类型，如果放进去的是Apple还好，因为类型相同；<br>但是如果放入的是Pear，其实就是相当于执行了apples.add(Pear pear)，肯定是不行的。 所以禁止add。</p>
+<p>　　总结起来就是：&lt;? extends T&gt;只能代表T的子类中， 相互之间没有继承关系的一种子类， 不能同时既表示苹果也表示梨；<br>但是红苹果RedApple继承自Apple，这两个有继承关系， apples中get到的对象类型就可能是苹果，也可能是红苹果。 </p>
+<h3 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h3><p>　　按照上边的说法，类比：List&lt;? super Apple&gt;是List&lt;T&gt;的父类！T为Apple类或其任一父类(注意此处为父类，PE中是子类)。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;CharSequence&gt; strList = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">List&lt;? <span class="built_in">super</span> String&gt; list = strList; <span class="comment">// √ 编译通过。因为满足CharSequence是String的父类。</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; strList = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">List&lt;? <span class="built_in">super</span> CharSequence&gt; list = strList; <span class="comment">// × 编译不过。因为因为T(String)不为CharSequence的父类。</span></span><br></pre></td></tr></table></figure>
+<p>　　List&lt;? super T&gt;类型的集合是允许get的，但是你找不到一个合适的类型来声明其引用， 因为T类型的父类型可能不只一个， 到底是哪一个不能确定。</p>
+<h2 id="PECS的典型使用场景"><a href="#PECS的典型使用场景" class="headerlink" title="PECS的典型使用场景"></a>PECS的典型使用场景</h2><p>　　下面是一个列表元素复制的示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.Collections;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PecsTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        List&lt;String&gt; src = Arrays.asList(<span class="string">&quot;aaa&quot;</span>, <span class="string">&quot;bbb&quot;</span>, <span class="string">&quot;ccc&quot;</span>, <span class="string">&quot;ddd&quot;</span>);</span><br><span class="line">        List&lt;String&gt; dest = Arrays.asList(<span class="keyword">new</span> <span class="title class_">String</span>[src.size()]);</span><br><span class="line">        Collections.copy(dest, src);</span><br><span class="line">        System.out.println(dest);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>　　下面是Collections.copy方法的源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="keyword">void</span> <span class="title function_">copy</span><span class="params">(List&lt;? <span class="built_in">super</span> T&gt; dest, List&lt;? extends T&gt; src)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">srcSize</span> <span class="operator">=</span> src.size();</span><br><span class="line">    <span class="keyword">if</span> (srcSize &gt; dest.size())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IndexOutOfBoundsException</span>(<span class="string">&quot;Source does not fit in dest&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (srcSize &lt; COPY_THRESHOLD ||</span><br><span class="line">        (src <span class="keyword">instanceof</span> RandomAccess &amp;&amp; dest <span class="keyword">instanceof</span> RandomAccess)) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;srcSize; i++)</span><br><span class="line">            dest.set(i, src.get(i));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        ListIterator&lt;? <span class="built_in">super</span> T&gt; di=dest.listIterator();</span><br><span class="line">        ListIterator&lt;? <span class="keyword">extends</span> <span class="title class_">T</span>&gt; si=src.listIterator();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;srcSize; i++) &#123;</span><br><span class="line">            di.next();</span><br><span class="line">            di.set(si.next());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong><em>总结：Provider指的就是该容器从自己的容器里提供T类型或T的子类型的对象供别人使用；<br>   Consumer指的就是该容器把从别处拿到的T类型或T的子类型的对象放到自己的容器。</em></strong></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://qota.top">Never</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://qota.top/2020/05/12/java%E6%B3%9B%E5%9E%8B%E7%9A%84PECS%E5%8E%9F%E5%88%99/">https://qota.top/2020/05/12/java%E6%B3%9B%E5%9E%8B%E7%9A%84PECS%E5%8E%9F%E5%88%99/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/java-%E6%B3%9B%E5%9E%8B-PECS-super-extends-%E6%B6%88%E8%B4%B9%E8%80%85-%E6%8F%90%E4%BE%9B%E8%80%85/">java 泛型 PECS super extends 消费者 提供者</a></div><div class="post_share"><div class="social-share" data-image="https://pic.zenvia.top/picgo/blog_avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/12/23/lombok%E5%BC%95%E5%8F%91%E7%9A%84%E8%A1%80%E6%A1%88/" title="lombok引发的血案"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">lombok引发的血案</div></div></a></div><div class="next-post pull-right"><a href="/2020/05/01/java8%E4%B9%8BStream/" title="java8之Stream"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">java8之Stream</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Never</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yeslsl/"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">My Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#PECS"><span class="toc-number">1.</span> <span class="toc-text">PECS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PE"><span class="toc-number">1.1.</span> <span class="toc-text">PE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CS"><span class="toc-number">1.2.</span> <span class="toc-text">CS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PECS%E7%9A%84%E5%85%B8%E5%9E%8B%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">2.</span> <span class="toc-text">PECS的典型使用场景</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%BA%8C%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第二篇博客">我的第二篇博客</a><time datetime="2023-07-20T03:56:37.000Z" title="Created 2023-07-20 11:56:37">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第一篇博客">我的第一篇博客</a><time datetime="2023-07-20T03:51:40.000Z" title="Created 2023-07-20 11:51:40">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/13/%E5%A4%96%E8%AE%BE%E6%8E%A5%E5%8F%A3-%E5%8D%8F%E8%AE%AE-%E6%80%BB%E7%BA%BF/" title="外设接口-协议-总线">外设接口-协议-总线</a><time datetime="2021-12-12T16:00:00.000Z" title="Created 2021-12-13 00:00:00">2021-12-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/01/BlockingQueue%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/" title="BlockingQueue阻塞队列">BlockingQueue阻塞队列</a><time datetime="2021-11-30T16:00:00.000Z" title="Created 2021-12-01 00:00:00">2021-12-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/11/29/apache-cxf3_3_1%E9%9B%86%E6%88%90springboot2_1_3/" title="apache-cxf3_3_1集成springboot2_1_3">apache-cxf3_3_1集成springboot2_1_3</a><time datetime="2021-11-28T16:00:00.000Z" title="Created 2021-11-29 00:00:00">2021-11-29</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Never</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,644 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>git命令汇总及使用 | Never</title><meta name="author" content="Never"><meta name="copyright" content="Never"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Git与SVN比较　　Git是分布式的， SVN是集中式的。怎么理解？集中式的svn，如果想正常工作，在每次提交更新时， 都必须先和远端的中央服务器进行同步。如果远程的服务器挂掉了，版本控制工作是不能正常进行的。分布式的git，每个用户在本地就可以实现版本的控制与管理。而且分布式的git也比svn安全，如果远程的中央服务器挂掉了，那就不能正常地进行版本控制了，而git的每个用户都有一份全量的版本，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git命令汇总及使用">
+<meta property="og:url" content="https://qota.top/2020/01/01/git%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB%E5%8F%8A%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="Never">
+<meta property="og:description" content="Git与SVN比较　　Git是分布式的， SVN是集中式的。怎么理解？集中式的svn，如果想正常工作，在每次提交更新时， 都必须先和远端的中央服务器进行同步。如果远程的服务器挂掉了，版本控制工作是不能正常进行的。分布式的git，每个用户在本地就可以实现版本的控制与管理。而且分布式的git也比svn安全，如果远程的中央服务器挂掉了，那就不能正常地进行版本控制了，而git的每个用户都有一份全量的版本，">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://pic.zenvia.top/picgo/blog_avatar.png">
+<meta property="article:published_time" content="2019-12-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-07-25T04:53:36.018Z">
+<meta property="article:author" content="Never">
+<meta property="article:tag" content="git 版本控制 分支 master">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.zenvia.top/picgo/blog_avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qota.top/2020/01/01/git%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB%E5%8F%8A%E4%BD%BF%E7%94%A8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'git命令汇总及使用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-07-25 12:53:36'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Never"><span class="site-name">Never</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">git命令汇总及使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2019-12-31T16:00:00.000Z" title="Created 2020-01-01 00:00:00">2020-01-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-07-25T04:53:36.018Z" title="Updated 2023-07-25 12:53:36">2023-07-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="git命令汇总及使用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="Git与SVN比较"><a href="#Git与SVN比较" class="headerlink" title="Git与SVN比较"></a>Git与SVN比较</h2><p>　　Git是分布式的， SVN是集中式的。怎么理解？集中式的svn，如果想正常工作，在每次<br>提交更新时， 都必须先和远端的中央服务器进行同步。如果远程的服务器挂掉了，版本控制工<br>作是不能正常进行的。分布式的git，每个用户在本地就可以实现版本的控制与管理。而且分布式<br>的git也比svn安全，如果远程的中央服务器挂掉了，那就不能正常地进行版本控制了，而git的每<br>个用户都有一份全量的版本，数据更安全。</p>
+<p>　　值得一提的是，git也有一个类似svn的中央服务器。为什么？git的中央服务器只是为了用户<br>之间同步更新更方便。所有的用户都和中央服务器进行版本同步，而免去了各个用户之间点对点<br>的同步，没有它，git也是可以正常进行版本控制的。仔细体会，这和svn的中央服务器的概念是<br>不同的。</p>
+<h2 id="Git的安装与配置"><a href="#Git的安装与配置" class="headerlink" title="Git的安装与配置"></a>Git的安装与配置</h2><ul>
+<li><p>git的安装省略</p>
+</li>
+<li><p>安装好git后， 使用 git --version 查看版本信息，以确认是否安装成功。</p>
+</li>
+<li><p>因为git是分布式的，每个用户都必须标志自己的信息。还需要进行如下配置：</p>
+</li>
+</ul>
+<p>　　git config --global user.name “Your Name”</p>
+<p>　　git config --global user.email “Your Email”</p>
+<p>　　此处的配置是公共的默认配置，在某个仓库没有指定username和email的情况下，会使用<br>上述global配置。</p>
+<p>　　给某一个仓库设置特定的userName 和 email的方式： 进入到该仓库的目录下， 执行以下命<br>令(不加global参数):</p>
+<p>　　git config user.name “Your specific Name”</p>
+<p>　　git config user.email “your specific email”</p>
+<p>　　<strong>注意: ssh-keygen -t rsa -C “yourEmail.com”，生成ssh key时的email，和此处的<br>email没关系，-C只是个ssh key的Comments，不做校验，注释而已。github会根据你写的<br>email从其系统中查找对应的用户，提交信息也显示该用户信息。</strong></p>
+<h2 id="git版本控制"><a href="#git版本控制" class="headerlink" title="git版本控制"></a>git版本控制</h2><p>　　先上表格</p>
+<table>
+<thead>
+<tr>
+<th align="center">命令</th>
+<th align="center">示例</th>
+<th align="center">示例功能介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">git add</td>
+<td align="center">git add .</td>
+<td align="center">把当前目录下所有不受git ignore约束的文件添加到版本库， 也可以指定添加某些文件到版本控制中，而不是所有。如 git add a.txt</td>
+</tr>
+<tr>
+<td align="center">git branch</td>
+<td align="center">git branch  --set-upstream-to&#x3D;origin&#x2F;master master</td>
+<td align="center">本地分支与远程分支关联</td>
+</tr>
+<tr>
+<td align="center">git branch</td>
+<td align="center">git branch -u origin&#x2F;master master</td>
+<td align="center">上个命令的简写形式，本地分支与远程分支关联</td>
+</tr>
+<tr>
+<td align="center">git branch</td>
+<td align="center">git branch [newBranch]</td>
+<td align="center">创建本地新分支 newBranch</td>
+</tr>
+<tr>
+<td align="center">git branch</td>
+<td align="center">git branch</td>
+<td align="center">查看现有所有本地分支</td>
+</tr>
+<tr>
+<td align="center">git branch</td>
+<td align="center">git branch -r</td>
+<td align="center">查看现有所有远程分支</td>
+</tr>
+<tr>
+<td align="center">git branch</td>
+<td align="center">git branch -a</td>
+<td align="center">查看现有所有分支(包括本地分支和远程分支)</td>
+</tr>
+<tr>
+<td align="center">git branch</td>
+<td align="center">git branch -D [本地分支名]</td>
+<td align="center">删除本地分支</td>
+</tr>
+<tr>
+<td align="center">git checkout</td>
+<td align="center">git checkout [dev]</td>
+<td align="center">切换到本地已有的dev分支</td>
+</tr>
+<tr>
+<td align="center">git checkout</td>
+<td align="center">git checkout -b [dev]</td>
+<td align="center">创建本地分支dev, 并切换到该分支</td>
+</tr>
+<tr>
+<td align="center">git checkout</td>
+<td align="center">git checkout -- a.txt</td>
+<td align="center">放弃a.txt文件在工作区的修改 --很重要，不加的话，是切换分支的意思。</td>
+</tr>
+<tr>
+<td align="center">git clone</td>
+<td align="center">git clone -b [testBranch] git_repo_url</td>
+<td align="center">将远程仓库git_repo_url的testBranch分支克隆到本地，-b表示克隆完成后本地分支切换到testBranch</td>
+</tr>
+<tr>
+<td align="center">git commit</td>
+<td align="center">git commit -m “My Comments”</td>
+<td align="center">提交修改信息到本地，-m是添加备注信息， 说明此次提交的修改内容， git最好带着备注信息，而且推荐按照实际修改填写本注释，方便后续维护。</td>
+</tr>
+<tr>
+<td align="center">git config</td>
+<td align="center">git config --get branch.master.remote</td>
+<td align="center">查看本地master分支对应的upstream远程仓库主机的名字(没手动修改的话，默认是origin)</td>
+</tr>
+<tr>
+<td align="center">git config</td>
+<td align="center">git config --get remote.origin.url</td>
+<td align="center">查看origin远程主机的仓库url</td>
+</tr>
+<tr>
+<td align="center">git config</td>
+<td align="center">git config --remote.origin.url remote_origin_repo_url</td>
+<td align="center">设置远程主机origin对应的仓库的url</td>
+</tr>
+<tr>
+<td align="center">git diff</td>
+<td align="center">git diff readme.txt</td>
+<td align="center">查看readme.txt文件本地与本地仓库的内容差异， 表格后有详细描述。</td>
+</tr>
+<tr>
+<td align="center">git fetch</td>
+<td align="center">git fetch origin master</td>
+<td align="center">将远程主机origin的master分支修改提交记录更新到本地的默认 .git&#x2F;refs&#x2F;remotes&#x2F;origin&#x2F;master文件中，只更新修改历史记录，不改变本地仓库文件内容(.git&#x2F;logs&#x2F;refs&#x2F;remotes&#x2F; 文件夹中的log也会更新， 下同)</td>
+</tr>
+<tr>
+<td align="center">git fetch</td>
+<td align="center">git fetch origin</td>
+<td align="center">将远程主机origin的所有分支修改提交记录更新到本地的默认 .git&#x2F;refs&#x2F;remotes&#x2F;origin&#x2F;目录下，只更新修改历史记录，不改变本地仓库文件内容</td>
+</tr>
+<tr>
+<td align="center">git fetch</td>
+<td align="center">git fetch</td>
+<td align="center">功能同上， 没有origin参数，指的是更新所有主机的修改记录到本地 .git&#x2F;refs&#x2F;remotes&#x2F;下的对应主机文件夹下</td>
+</tr>
+<tr>
+<td align="center">git init</td>
+<td align="center">git init</td>
+<td align="center">将执行该命令的目录初始化为git仓库，结果就是在该目录下生成了.git文件夹，存储着版本信息</td>
+</tr>
+<tr>
+<td align="center">git log</td>
+<td align="center">git log</td>
+<td align="center">查看提交历史记录，按时间由近及远排序。包含版本提交散列值(版本号)，提交作者，提交日期及提交备注</td>
+</tr>
+<tr>
+<td align="center">git log</td>
+<td align="center">git log --graph</td>
+<td align="center">以直观的图型方式查看提交历史记录，按时间由近及远排序。</td>
+</tr>
+<tr>
+<td align="center">git log</td>
+<td align="center">git log --graph --oneline</td>
+<td align="center">以直观的图型方式查看提交历史记录，按时间由近及远排序。较上条命令多了--oneline参数，修改历史信息更简短</td>
+</tr>
+<tr>
+<td align="center">git merge</td>
+<td align="center">git merge [dev]</td>
+<td align="center">将指定的dev分支合并到当前分支</td>
+</tr>
+<tr>
+<td align="center">git merge</td>
+<td align="center">git merge origin&#x2F;master</td>
+<td align="center">将指定的远程主机origin的master分支合并到当前分支, 可能会冲突， 解决后执行git add 和 git commit即可</td>
+</tr>
+<tr>
+<td align="center">git merge</td>
+<td align="center">git merge --abort</td>
+<td align="center">将上一步的git merge操作进行回退</td>
+</tr>
+<tr>
+<td align="center">git pull</td>
+<td align="center">git pull --allowed-unrelated-histories</td>
+<td align="center">允许版本历史不关联的仓库进行pull操作， git pull的作用是从远程仓库将代码拉到本地</td>
+</tr>
+<tr>
+<td align="center">git pull</td>
+<td align="center">git pull &lt;远程主机名&gt; &lt;远程分支名&gt;:&lt;本地分支名&gt;</td>
+<td align="center">参数全一点的git pull命令</td>
+</tr>
+<tr>
+<td align="center">git push</td>
+<td align="center">git push -u origin master:master</td>
+<td align="center">git push是提交修改到远程仓库。 -u的作用是将当前本地分支的upstream设置为当前提交到的远程分支， downstream也同时会被设置</td>
+</tr>
+<tr>
+<td align="center">git reflog</td>
+<td align="center">git reflog</td>
+<td align="center">查看每一次操作的日志记录，包含reset记录，使用场景是不小心reset后，可以找回reset前的版本记录。</td>
+</tr>
+<tr>
+<td align="center">git remote add</td>
+<td align="center">git remote add origin git_repo_url</td>
+<td align="center">将本地已有仓库与远程仓库关联， origin：远程主机名，可以修改，但一般为origin即可</td>
+</tr>
+<tr>
+<td align="center">git remote</td>
+<td align="center">git remote -v</td>
+<td align="center">查看当前已关联的所有远程分支</td>
+</tr>
+<tr>
+<td align="center">git remote</td>
+<td align="center">git remote set-url origin remote_origin_git_url</td>
+<td align="center">修改origin远程主机的仓库url为remote_origin_repo_url, 功能同git config remote.origin.url remote_origin_repo_url</td>
+</tr>
+<tr>
+<td align="center">git remote</td>
+<td align="center">git remote rm origin</td>
+<td align="center">断开与远程主机origin的关联</td>
+</tr>
+<tr>
+<td align="center">git remote</td>
+<td align="center">git remote rename remoteHost origin</td>
+<td align="center">将已关联的远程主机remoteHost重命名为origin</td>
+</tr>
+<tr>
+<td align="center">git reset</td>
+<td align="center">git reset --hard [历史版本]</td>
+<td align="center">把当前版本回退到[历史版本]</td>
+</tr>
+<tr>
+<td align="center">git rebase</td>
+<td align="center">bbb</td>
+<td align="center">ccc</td>
+</tr>
+<tr>
+<td align="center">git revert</td>
+<td align="center">bbb</td>
+<td align="center">ccc</td>
+</tr>
+<tr>
+<td align="center">git rm</td>
+<td align="center">git rm file</td>
+<td align="center">工作区删除了某个文件， 使用该命令将删除反应到暂存区， 此时git rm和git add命令的效果是相同的。</td>
+</tr>
+<tr>
+<td align="center">git rm</td>
+<td align="center">git rm --cached fileName(s)</td>
+<td align="center">将不小心加入版本管理，现在不想进行版本管理的文件，移出暂存区</td>
+</tr>
+<tr>
+<td align="center">git status</td>
+<td align="center">git status</td>
+<td align="center">此命令可以查看当前仓库的状态，包含当前所处的本地分支、没有加入版本控制的文件(如果有的话)、和远程仓库的版本差异</td>
+</tr>
+<tr>
+<td align="center">git stash</td>
+<td align="center">bbb</td>
+<td align="center">ccc</td>
+</tr>
+</tbody></table>
+<h3 id="git-diff详解"><a href="#git-diff详解" class="headerlink" title="git diff详解"></a>git diff详解</h3><p>　　以下是git diff readme.txt的输出日志：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">git diff readme.txt </span><br><span class="line">diff --git a/readme.txt b/readme.txt</span><br><span class="line">index 46d49bf..9247db6 <span class="number">100644</span></span><br><span class="line">--- a/readme.txt</span><br><span class="line">+++ b/readme.txt</span><br><span class="line">@@ -<span class="number">1</span>,<span class="number">2</span> +<span class="number">1</span>,<span class="number">2</span> @@</span><br><span class="line">-Git is a version control system.</span><br><span class="line">+Git is a distributed version control system.</span><br><span class="line"> Git is free software.</span><br></pre></td></tr></table></figure>
+
+<p>修改前的文件内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Git is a version control system.</span><br><span class="line">Git is free software.</span><br></pre></td></tr></table></figure>
+<p>修改后的文件内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Git is a distributed version control system.</span><br><span class="line">Git is free software.</span><br></pre></td></tr></table></figure>
+<p>　　git diff的输出中，@@-1,2 +1,2 @@代表：</p>
+<ul>
+<li>@@ @@中间的代表有差异的部分；</li>
+<li>-代表修改前的内容行， +代表修改后的内容行；</li>
+<li>-1,2代表修改前的内容是前边有-标志的，连续两行；</li>
+<li>+1,2代表修改后的内容是前边有+标志的，连续两行。</li>
+</ul>
+<h3 id="git-log详解"><a href="#git-log详解" class="headerlink" title="git log详解"></a>git log详解</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">git log</span><br><span class="line">commit 1094adb7b9b3807259d8cb349e7df1d4d6477073 (HEAD -&gt; master)</span><br><span class="line">Author: Michael Liao &lt;xxx<span class="meta">@gmail</span>.com&gt;</span><br><span class="line">Date:   Fri May <span class="number">18</span> <span class="number">21</span>:<span class="number">06</span>:<span class="number">15</span> <span class="number">2018</span> +0800</span><br><span class="line"></span><br><span class="line">    append GPL</span><br><span class="line"></span><br><span class="line">commit e475afc93c209a690c39c13a46716e8fa000c366</span><br><span class="line">Author: Michael Liao &lt;xxx<span class="meta">@gmail</span>.com&gt;</span><br><span class="line">Date:   Fri May <span class="number">18</span> <span class="number">21</span>:<span class="number">03</span>:<span class="number">36</span> <span class="number">2018</span> +0800</span><br><span class="line"></span><br><span class="line">    add distributed</span><br><span class="line"></span><br><span class="line">commit eaadf4e385e865d25c48e7ca9c8395c3f7dfaef0</span><br><span class="line">Author: Michael Liao &lt;xxx<span class="meta">@gmail</span>.com&gt;</span><br><span class="line">Date:   Fri May <span class="number">18</span> <span class="number">20</span>:<span class="number">59</span>:<span class="number">18</span> <span class="number">2018</span> +0800</span><br><span class="line"></span><br><span class="line">    wrote a readme file</span><br></pre></td></tr></table></figure>
+<p>　　commit及提交版本号，Author作者， Date日期。appendGPL等为备注信息。</p>
+<p>　　如果不想显示太复杂，可以只显示一行信息， 加--pretty&#x3D;oneline参数即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git log --pretty=oneline 或 git log --oneline(差异：后者commit id只会显示前几个字符)</span><br><span class="line"></span><br><span class="line">1094adb7b9b3807259d8cb349e7df1d4d6477073 (HEAD -&gt; master) append GPL</span><br><span class="line">e475afc93c209a690c39c13a46716e8fa000c366 add distributed</span><br><span class="line">eaadf4e385e865d25c48e7ca9c8395c3f7dfaef0 wrote a readme file</span><br></pre></td></tr></table></figure>
+
+<p>　　我们看到已经隐去了不重要的作者和提交日期等信息。</p>
+<h3 id="git-reset详解"><a href="#git-reset详解" class="headerlink" title="git reset详解"></a>git reset详解</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">先git log拿到需要回退到的commit_id,</span><br><span class="line">然后，git reset --hard commit_id</span><br><span class="line">如果确定回退 git push --force(相当暴力)</span><br></pre></td></tr></table></figure>
+<p>　　<em>问：git reset --hard后，工作区的内容回退到以前的代码，远程库里面没改变， 我又执行 git add *,<br>当我去执行git push的时候提示： On branch master Your branch is behind ‘origin&#x2F;master’<br>by 1 commit, and can be fast-forwarded. (use “git pull” to update your local branch)，<br>这种情况如何解决？</em></p>
+<p>　　<strong>答：假设一开始你的本地和远程都是：a -&gt; b -&gt; c,你想把HEAD回退到b，那么在本地就变成<br>了：a -&gt; b, 这个时候，如果没有远程库，你就接着怎么操作都行，比如：a -&gt; b -&gt; d,但是在<br>有远程库的情况下，你push会失败，因为远程库是 a-&gt;b-&gt;c，你的是 a-&gt;b-&gt;d.</strong> </p>
+<p>　　<strong>两种方案：push的时候用--force，强制把远程库变成a -&gt; b -&gt; d，大部分公司严禁这么<br>干，会被别人揍一顿做一个反向操作，把自己本地变成a -&gt; b -&gt; c -&gt; d，注意b和d文件快照<br>内容一模一样，但是commit id肯定不同，再push上去远程也会变成 a -&gt; b -&gt; c -&gt; d.</strong></p>
+<h3 id="reset的hard、soft、mixed-默认-参数详解"><a href="#reset的hard、soft、mixed-默认-参数详解" class="headerlink" title="reset的hard、soft、mixed(默认)参数详解"></a>reset的hard、soft、mixed(默认)参数详解</h3><p>　　首先声明几个名词定义：</p>
+<ul>
+<li>工作区： 未add到版本控制的not staged的文件；</li>
+<li>暂存区：已add但未提交的staged过的文件。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git reset --hard commit_id  <span class="comment">// 只会保留当前版本下工作区的文件，其他的文件都回退。</span></span><br><span class="line">git reset --mixed commit_id <span class="comment">// 会保留当前版本工作区和缓存区的文件以及版本之间新添加的文件在工作区中，当前版本工作区的文件也会添加到回退到版本的工作区中。</span></span><br><span class="line">git reset --soft commit_id <span class="comment">// 回退到的版本会将当前版本缓存区与版本之间新添加的文件放到回退到版本的缓存区中，当前版本中的工作区中的文件放到回退到版本的工作区中。</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="如何将本地已有的分支与远程已有的分支进行关联"><a href="#如何将本地已有的分支与远程已有的分支进行关联" class="headerlink" title="如何将本地已有的分支与远程已有的分支进行关联"></a>如何将本地已有的分支与远程已有的分支进行关联</h3><p>　　注意： 本地分支工作区和暂存区必须是空的，而且本地仓库必须有内容，否则无法关联。</p>
+<ol>
+<li>git remote add origin git_repo_url；</li>
+<li>git remote -v可以查看是否远程仓库是否关联成功；</li>
+<li>git pull origin master --allow-unrelated-histories</li>
+<li>git branch --set-upstream-to&#x3D;origin&#x2F;master master 关联本地master和远程master</li>
+<li>git push origin master</li>
+</ol>
+<h3 id="git-config详解"><a href="#git-config详解" class="headerlink" title="git config详解"></a>git config详解</h3><p><strong><em>Config file location</em></strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">命令参数</th>
+<th align="left">命令参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">--global</td>
+<td align="left">use global config file</td>
+</tr>
+<tr>
+<td align="center">--system</td>
+<td align="left">use system config file</td>
+</tr>
+<tr>
+<td align="center">--local</td>
+<td align="left">use repository config file</td>
+</tr>
+<tr>
+<td align="center">--worktree</td>
+<td align="left">use per-worktree config file</td>
+</tr>
+<tr>
+<td align="center">-f, --file <file></td>
+<td align="left">use given config file</td>
+</tr>
+<tr>
+<td align="center">--blob <blob-id></td>
+<td align="left">read config from given blob object</td>
+</tr>
+</tbody></table>
+<p><strong><em>Action</em></strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">命令参数</th>
+<th align="left">命令参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">--get</td>
+<td align="left">get value: name [value-regex]</td>
+</tr>
+<tr>
+<td align="center">--get-all</td>
+<td align="left">get all values: key [value-regex]</td>
+</tr>
+<tr>
+<td align="center">--get-regexp</td>
+<td align="left">get values for regexp: name-regex [value-regex]</td>
+</tr>
+<tr>
+<td align="center">--get-urlmatch</td>
+<td align="left">get value specific for the URL: section[.var] URL</td>
+</tr>
+<tr>
+<td align="center">--replace-all</td>
+<td align="left">replace all matching variables: name value [value_regex]</td>
+</tr>
+<tr>
+<td align="center">--add</td>
+<td align="left">add a new variable: name value</td>
+</tr>
+<tr>
+<td align="center">--unset</td>
+<td align="left">remove a variable: name [value-regex]</td>
+</tr>
+<tr>
+<td align="center">--unset-all</td>
+<td align="left">remove all matches: name [value-regex]</td>
+</tr>
+<tr>
+<td align="center">--rename-section</td>
+<td align="left">rename section: old-name new-name</td>
+</tr>
+<tr>
+<td align="center">--remove-section</td>
+<td align="left">remove a section: name</td>
+</tr>
+<tr>
+<td align="center">-l, --list</td>
+<td align="left">list all</td>
+</tr>
+<tr>
+<td align="center">-e, --edit</td>
+<td align="left">open an editor</td>
+</tr>
+<tr>
+<td align="center">--get-color</td>
+<td align="left">find the color configured: slot [default]</td>
+</tr>
+<tr>
+<td align="center">--get-colorbool</td>
+<td align="left">find the color setting: slot [stdout-is-tty]</td>
+</tr>
+</tbody></table>
+<p><strong><em>Type</em></strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">命令参数</th>
+<th align="left">命令参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">-t, --type &lt;&gt;</td>
+<td align="left">value is given this type</td>
+</tr>
+<tr>
+<td align="center">--bool</td>
+<td align="left">value is “true” or “false”</td>
+</tr>
+<tr>
+<td align="center">--int</td>
+<td align="left">value is decimal number</td>
+</tr>
+<tr>
+<td align="center">--bool-or-int</td>
+<td align="left">value is --bool or --int</td>
+</tr>
+<tr>
+<td align="center">--path</td>
+<td align="left">value is a path (file or directory name)</td>
+</tr>
+<tr>
+<td align="center">--expiry-date</td>
+<td align="left">value is an expiry date</td>
+</tr>
+</tbody></table>
+<p><strong><em>Other</em></strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">命令参数</th>
+<th align="left">命令参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">-z, --null</td>
+<td align="left">terminate values with NUL byte</td>
+</tr>
+<tr>
+<td align="center">--name-only</td>
+<td align="left">show variable names only</td>
+</tr>
+<tr>
+<td align="center">--includes</td>
+<td align="left">respect include directives on lookup</td>
+</tr>
+<tr>
+<td align="center">--show-origin</td>
+<td align="left">show origin of config (file, standard input, blob, command</td>
+</tr>
+<tr>
+<td align="center">--default <value></td>
+<td align="left">with --get, use default value when missing entry</td>
+</tr>
+</tbody></table>
+<h3 id="push-default-push命令的默认行为"><a href="#push-default-push命令的默认行为" class="headerlink" title="push.default push命令的默认行为"></a>push.default push命令的默认行为</h3><p>　　在git2.0之后，push.default改为simple, 在之前默认为matching.</p>
+<p>　　push.default的可选值：nothing , current , upstream , simple , matching.</p>
+<p> 　　<strong><em>注：push.default默认值的意思是只执行git push, 后边不带远程仓库主机及分支等参数以后<br> 发生的操作。</em></strong></p>
+<p> 　　push.default的值是可以修改的，如下修改default为simple：<br> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global push.<span class="keyword">default</span> simple</span><br></pre></td></tr></table></figure></p>
+<table>
+<thead>
+<tr>
+<th align="center">行为参数</th>
+<th align="center">参数意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">nothing</td>
+<td align="center">无默认操作，需要显示地指定远程分支；eg : git push origin branchname</td>
+</tr>
+<tr>
+<td align="center">current</td>
+<td align="center">push当前分支到远程同名分支，如果远程同名分支不存在则自动创建同名分支</td>
+</tr>
+<tr>
+<td align="center">upstream</td>
+<td align="center">push当前分支到它的upstream分支上</td>
+</tr>
+<tr>
+<td align="center">simple</td>
+<td align="center">与upstream类似，但有一点不同，就是simple必须保证本地分支和它的远程分支upstream分支同名，否则会拒绝push操作。</td>
+</tr>
+<tr>
+<td align="center">matching</td>
+<td align="center">push所有本地和远程两端都存在的同名分支</td>
+</tr>
+</tbody></table>
+<p>　　查看分支的upstream命令: get config --get branch.&lt;分支名&gt;.remote</p>
+<p>　　例如:查看本地master分支的upstream</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git config --get branch.master.remote</span><br><span class="line"></span><br><span class="line">结果为：origin</span><br></pre></td></tr></table></figure>
+
+<p>　　再来解释一下upstream , 其实upstream和downstream是一对的，它的意思如下：</p>
+<p>　　假设有两个仓库A和B，当我们把仓库A中x分支的代码push到仓库B中的y分支上，则B中的y分支是A中的x分支的upstream；A中x分支是B中y分支的downstream。</p>
+<h3 id="git-bash-遇到的问题"><a href="#git-bash-遇到的问题" class="headerlink" title="git bash 遇到的问题"></a>git bash 遇到的问题</h3><p>　　Q: git命令行在windows中报错WARNING: terminal is not fully functional?</p>
+<p>　　A: 系统变量中新建一个变量名为TERM，值为cygwin.</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://qota.top">Never</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://qota.top/2020/01/01/git%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB%E5%8F%8A%E4%BD%BF%E7%94%A8/">https://qota.top/2020/01/01/git%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB%E5%8F%8A%E4%BD%BF%E7%94%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/git-%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6-%E5%88%86%E6%94%AF-master/">git 版本控制 分支 master</a></div><div class="post_share"><div class="social-share" data-image="https://pic.zenvia.top/picgo/blog_avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/01/06/%E5%BE%85%E6%89%93%E5%8D%A1%E7%9F%A5%E8%AF%86/" title="待打卡知识"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">待打卡知识</div></div></a></div><div class="next-post pull-right"><a href="/2019/12/13/Vue%E6%8C%87%E4%BB%A4%E5%A4%A7%E5%85%A8/" title="Vue指令大全"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Vue指令大全</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Never</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yeslsl/"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">My Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Git%E4%B8%8ESVN%E6%AF%94%E8%BE%83"><span class="toc-number">1.</span> <span class="toc-text">Git与SVN比较</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git%E7%9A%84%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">Git的安装与配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#git%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">git版本控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#git-diff%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.1.</span> <span class="toc-text">git diff详解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git-log%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.2.</span> <span class="toc-text">git log详解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git-reset%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.3.</span> <span class="toc-text">git reset详解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#reset%E7%9A%84hard%E3%80%81soft%E3%80%81mixed-%E9%BB%98%E8%AE%A4-%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.4.</span> <span class="toc-text">reset的hard、soft、mixed(默认)参数详解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86%E6%9C%AC%E5%9C%B0%E5%B7%B2%E6%9C%89%E7%9A%84%E5%88%86%E6%94%AF%E4%B8%8E%E8%BF%9C%E7%A8%8B%E5%B7%B2%E6%9C%89%E7%9A%84%E5%88%86%E6%94%AF%E8%BF%9B%E8%A1%8C%E5%85%B3%E8%81%94"><span class="toc-number">3.5.</span> <span class="toc-text">如何将本地已有的分支与远程已有的分支进行关联</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git-config%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.6.</span> <span class="toc-text">git config详解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#push-default-push%E5%91%BD%E4%BB%A4%E7%9A%84%E9%BB%98%E8%AE%A4%E8%A1%8C%E4%B8%BA"><span class="toc-number">3.7.</span> <span class="toc-text">push.default push命令的默认行为</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#git-bash-%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">3.8.</span> <span class="toc-text">git bash 遇到的问题</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%BA%8C%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第二篇博客">我的第二篇博客</a><time datetime="2023-07-20T03:56:37.000Z" title="Created 2023-07-20 11:56:37">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第一篇博客">我的第一篇博客</a><time datetime="2023-07-20T03:51:40.000Z" title="Created 2023-07-20 11:51:40">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/13/%E5%A4%96%E8%AE%BE%E6%8E%A5%E5%8F%A3-%E5%8D%8F%E8%AE%AE-%E6%80%BB%E7%BA%BF/" title="外设接口-协议-总线">外设接口-协议-总线</a><time datetime="2021-12-12T16:00:00.000Z" title="Created 2021-12-13 00:00:00">2021-12-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/01/BlockingQueue%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/" title="BlockingQueue阻塞队列">BlockingQueue阻塞队列</a><time datetime="2021-11-30T16:00:00.000Z" title="Created 2021-12-01 00:00:00">2021-12-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/11/29/apache-cxf3_3_1%E9%9B%86%E6%88%90springboot2_1_3/" title="apache-cxf3_3_1集成springboot2_1_3">apache-cxf3_3_1集成springboot2_1_3</a><time datetime="2021-11-28T16:00:00.000Z" title="Created 2021-11-29 00:00:00">2021-11-29</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Never</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

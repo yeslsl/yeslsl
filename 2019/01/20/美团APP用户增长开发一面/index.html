@@ -1,0 +1,388 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>美团APP用户增长开发一面 | Never</title><meta name="author" content="Never"><meta name="copyright" content="Never"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="自建线程池和线程池参数  一个任务先进队列还是先执行， 任务是怎么执行的？ 如果当前线程数未达到核心线程数， 则直接交由核心线程完成任务； 如果当前线程数达到核心线程数， 但是队列未满， 则进入队列， 有线程池调度队列中的任务执行； 如果当前线程数达到核心线程数， 而且队列已满， 则会触发拒绝策略。 默认的拒绝策略包括四种：  CallerRunsPolicy: 只要线程池没关闭，就直接用调用者">
+<meta property="og:type" content="article">
+<meta property="og:title" content="美团APP用户增长开发一面">
+<meta property="og:url" content="https://qota.top/2019/01/20/%E7%BE%8E%E5%9B%A2APP%E7%94%A8%E6%88%B7%E5%A2%9E%E9%95%BF%E5%BC%80%E5%8F%91%E4%B8%80%E9%9D%A2/index.html">
+<meta property="og:site_name" content="Never">
+<meta property="og:description" content="自建线程池和线程池参数  一个任务先进队列还是先执行， 任务是怎么执行的？ 如果当前线程数未达到核心线程数， 则直接交由核心线程完成任务； 如果当前线程数达到核心线程数， 但是队列未满， 则进入队列， 有线程池调度队列中的任务执行； 如果当前线程数达到核心线程数， 而且队列已满， 则会触发拒绝策略。 默认的拒绝策略包括四种：  CallerRunsPolicy: 只要线程池没关闭，就直接用调用者">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://pic.zenvia.top/picgo/blog_avatar.png">
+<meta property="article:published_time" content="2019-01-19T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-07-25T04:50:55.549Z">
+<meta property="article:author" content="Never">
+<meta property="article:tag" content="面试 美团 Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.zenvia.top/picgo/blog_avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qota.top/2019/01/20/%E7%BE%8E%E5%9B%A2APP%E7%94%A8%E6%88%B7%E5%A2%9E%E9%95%BF%E5%BC%80%E5%8F%91%E4%B8%80%E9%9D%A2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '美团APP用户增长开发一面',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2023-07-25 12:50:55'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Never"><span class="site-name">Never</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">美团APP用户增长开发一面</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2019-01-19T16:00:00.000Z" title="Created 2019-01-20 00:00:00">2019-01-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-07-25T04:50:55.549Z" title="Updated 2023-07-25 12:50:55">2023-07-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="美团APP用户增长开发一面"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><ol>
+<li><p><strong>自建线程池和线程池参数</strong></p>
+<ul>
+<li>一个任务先进队列还是先执行， 任务是怎么执行的？<ul>
+<li>如果当前线程数未达到核心线程数， 则直接交由核心线程完成任务；</li>
+<li>如果当前线程数达到核心线程数， 但是队列未满， 则进入队列， 有线程池调度队列中的任务执行；</li>
+<li>如果当前线程数达到核心线程数， 而且队列已满， 则会触发拒绝策略。<ul>
+<li>默认的拒绝策略包括四种： <ul>
+<li>CallerRunsPolicy: 只要线程池没关闭，就直接用调用者所在线程来运行任务</li>
+<li>AbortPolicy: 直接抛出 RejectedExecutionException 异常</li>
+<li>DiscardPolicy: 悄悄把任务放弃，不做了</li>
+<li>DiscardOldestPolicy： 把队列里待最久的那个任务扔了，然后再调用 execute() 试试看能否成功</li>
+<li>还可以自定义策略： 实现RejectedExecutionHandler 接口的 <code>public void rejectedExecution(Runnable r, ThreadPoolExecutor executor)</code> 方法。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>CPU密集型的任务和IO密集型的任务，线程池怎么设计？<ul>
+<li>任务类型举例<ul>
+<li>CPU密集型： 一般我们系统的静态资源,比如js,css等,会存在一个版本号,如 main.js?v0,每当用户访问这个资源的时候,会发送一个比对请求到服务端,比对本地静态文件版本和服务端的文件版本是否一致,不一致则更新.这种任务一般不占用大量IO,所以后台服务器可以快速处理,压力落在CPU上.</li>
+<li>IO密集型： CRM系统,常有大数据量的查询和批量插入操作,此时的压力主要在I&#x2F;O上.</li>
+</ul>
+</li>
+<li>线程数与任务类型的关系：<ul>
+<li>与CPU密集型的关系：（以下表述来自网络， 正确性有待考证）<ul>
+<li>一般情况下,CPU核心数 &#x3D;&#x3D; 最大同时执行线程数.在这种情况下(设CPU核心数为n),大量客户端会发送请求到服务器,但是服务器最多只能同时执行n个线程.</li>
+<li>设线程池工作队列长度为m,且m&gt;&gt;n,则此时会导致CPU频繁切换线程来执行(如果CPU使用的是FCFS,则不会频繁切换,如使用的是其他CPU调度算法,如时间片轮转法,最短时间优先,则可能会导致频繁的线程切换).</li>
+<li>所以这种情况下,无需设置过大的线程池工作队列,(工作队列长度 &#x3D; CPU核心数 || CPU核心数+1) 即可.</li>
+</ul>
+</li>
+<li>与I&#x2F;O密集型的关系：（以下表述来自网络， 正确性有待考证）<ul>
+<li>1个线程对应1个方法栈,线程的生命周期与方法栈相同.</li>
+<li>所以,这种情况下,应该加大线程池工作队列的长度(如果CPU调度算法使用的是FCFS,则无法切换),尽量不让CPU空闲下来,提高CPU利用率.</li>
+</ul>
+</li>
+<li>总结： CPU密集型线程数可以少开一点线程， 最好是线程数等于CPU核心数， 避免了上下文切换， 执行更快速； IO密集型的线程数可以适当多开一点， CPU核心数的2倍后者更多， 这样在某个线程IO阻塞的时候， CPU去执行其他线程的任务， 可提高效率。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>为何IO操作不需要CPU? <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/31259327" title="https://www.zhihu.com/question/31259327">参考链接</a></li>
+</ul>
+</li>
+<li><p>JVM内存区域的划分</p>
+<ul>
+<li><p>虚拟机栈的栈帧包含什么？</p>
+<ul>
+<li>局部变量表(Local Variables)：方法中定义的局部变量以及方法的参数存放在这张表中</li>
+<li>操作数栈(Operand Stack)：以压栈和出栈的方式存储操作数的</li>
+<li>指向运行时常量池的引用(A reference to the run-time constant pool)：每个栈帧都包含一个指向运行时常量池中该栈帧所属方法的引用，持有这个引用是为了支持方法调用过程中的动态 连接(Dynamic Linking)。</li>
+<li>方法返回地址(Return Address)和附加信息： 当一个方法开始执行后,只有两种方式可以退出，一种是遇到方法返回的字节码指令；一种是遇见异常，并且 这个异常没有在方法体内得到处理。</li>
+</ul>
+</li>
+<li><p>JVM默认老年代用什么收集器， 年轻代用什么收集器？</p>
+<ul>
+<li><p>通过JVM参数 -XX:+PrintCommandLineFlags -version可以查看当前使用的收集器</p>
+</li>
+<li><p>jdk1.7 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）</p>
+</li>
+<li><p>jdk1.8 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）</p>
+</li>
+<li><p>jdk1.9 默认垃圾收集器G1</p>
+</li>
+<li><p>JVM参数与对应的垃圾回收器的关系？</p>
+<table>
+<thead>
+<tr>
+<th align="center">参数</th>
+<th align="center">年轻代收集器</th>
+<th align="center">老年代收集器</th>
+<th align="center">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">-XX:+UseSerialGC</td>
+<td align="center">Serial</td>
+<td align="center">Serial Old</td>
+<td align="center">Client模式默认值</td>
+</tr>
+<tr>
+<td align="center">-XX:+UseParNewGC</td>
+<td align="center">ParNew</td>
+<td align="center">Serial Old</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">-XX:+UseConcMarkSweepGC</td>
+<td align="center">ParNew</td>
+<td align="center">CMS + Serial Old</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">-XX:+UseParallelGC</td>
+<td align="center">Parallel Scavenge</td>
+<td align="center">Serial Old (PS MarkSweep)</td>
+<td align="center">Server模式默认值</td>
+</tr>
+<tr>
+<td align="center">UseParallelOldGC</td>
+<td align="center">Parallel Scavenge</td>
+<td align="center">Parallel Old</td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+</li>
+<li><p>G1垃圾收集过程？ <a target="_blank" rel="noopener" href="https://www.cnblogs.com/yufengzhang/p/10571081.html" title="https://www.cnblogs.com/yufengzhang/p/10571081.html">参考链接</a></p>
+<ul>
+<li>年轻代回收（young gc）过程</li>
+<li>老年代并发标记（concurrent marking）过程</li>
+<li>混合回收过程（mixed gc）</li>
+</ul>
+</li>
+<li><p>CMS垃圾收集过程？<a target="_blank" rel="noopener" href="https://www.cnblogs.com/littleLord/p/5380624.html" title="https://www.cnblogs.com/littleLord/p/5380624.html">参考链接</a></p>
+<ul>
+<li>老年代的一款垃圾收集器，以获取最小停顿时间为目的。</li>
+</ul>
+</li>
+<li><p>Parallel Scavenge垃圾收集过程？<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/764f93fac5f3" title="https://www.jianshu.com/p/764f93fac5f3">参考链接</a></p>
+<ul>
+<li>吞吐量优先的垃圾回收器</li>
+<li>新生代GC</li>
+</ul>
+</li>
+<li><p>哪些对象可以作为GCRoots?</p>
+<ul>
+<li>虚拟机栈（栈帧中的本地变量表）中的引用的对象；</li>
+<li>方法区中类静态属性引用的对象；</li>
+<li>方法区中常量引用的对象</li>
+<li>本地方法栈中JNI（一般说的Native方法）的引用的对象</li>
+</ul>
+</li>
+<li><p>GC日志分析</p>
+</li>
+</ul>
+</li>
+<li><p>为什么oracle更适合银行项目？ 或者说Oracle比MySQL强在哪？</p>
+<ul>
+<li>…</li>
+</ul>
+</li>
+<li><p>事务隔离级别（可重复读 不可重复读 串行化 读未提交）<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ForeverLover/p/4866354.html" title="https://www.cnblogs.com/ForeverLover/p/4866354.html">参考链接</a></p>
+<ul>
+<li><p>四种隔离级别（定义这4种隔离级别时，制定者主要围绕着基于锁的并发控制来说的）</p>
+<ul>
+<li>READ UNCOMMITTED（读未提交数据）：允许事务读取未被其他事务提交的变更数据，会出现脏读、不可重复读和幻读问题</li>
+<li>READ COMMITTED（读已提交数据）：只允许事务读取已经被其他事务提交的变更数据，可避免脏读，仍会出现不可重复读和幻读问题。</li>
+<li>REPEATABLE READ（可重复读）：确保事务可以多次从一个字段中读取相同的值，在此事务持续期间，禁止其他事务对此字段的更新，可以避免脏读和不可重复读，仍会出现幻读问题。</li>
+<li>SERIALIZABLE（序列化）：确保事务可以从一个表中读取相同的行，在这个事务持续期间，禁止其他事务对该表执行插入、更新和删除操作，可避免所有并发问题，但性能非常低。</li>
+</ul>
+</li>
+<li><p>并发问题： 存在两个事物（T1，T2）同时运行：</p>
+<ul>
+<li>脏读：T1读取了已经被T2修改但还未提交的字段，由于某种原因，T2事物回滚，则T1读取的内容是临时且无效的。</li>
+<li>不可重复读：T1读取一个字段，之后T2更新了该字段，T1再次读取该字段值发生了变化。</li>
+<li>幻读：T1从一个表中读取了一个字段，然后T2在该表中插入了一些新的行，之后T1在此读取该表会多出几行。</li>
+</ul>
+</li>
+<li><p>数据库事务的特性：原子性、一致性、隔离性(<strong>有上述四种隔离级别</strong>)、持久性</p>
+<ul>
+<li>原子性：事务的原子性指的是，事务中包含的程序作为数据库的逻辑工作单位，它所做的对数据修改操作要么全部执行，要么完全不执行，这种特性称为原子性。（简单地说就是，几个对于数据库的操作要么全执行，要么全不执行，即同时成功起作用或同时失败没影响）</li>
+<li>一致性：事务一致性值得是在一个事务执行之前和执行之后数据库都必须处于一致性状态（中途是否一致不用管），这种特性称为一致性。（如果数据库的状态满足所有的完整性约束，就说该数据库是一致的。一致性处理数据库中对所有语义的保护。如：客户K1要向客户K2转账，K1账户减少的金额就是K2账户增加的金额，在转账之前K1和K2账户的金额之和与转账之后K1和K2账户的金额之和是一样的，在转账期间可能不满足这种一致性，但事务前后是数据库数据是一致的）</li>
+<li>隔离性：隔离性指的是并发的事务是相互隔离的。（一个事务内部的操作及正在操作的数据必须封装起来，不被其它企图进行修改的事务看到）</li>
+<li>持久性：持久性指当系统或介质发生故障时，确保已提交的更新不能丢失。（一个事务提交，DBMS保证它对数据库中数据的改变应该是永久性的，可以经受任何系统故障，持久性通过数据库备份和恢复来保证）</li>
+</ul>
+</li>
+<li><p>锁一张表和锁一行数据对应的隔离级别是什么？</p>
+</li>
+<li><p>跨行转账是如何保证数据库事务的？<a target="_blank" rel="noopener" href="https://www.iteye.com/job/topic/78417" title="https://www.iteye.com/job/topic/78417">参考链接</a></p>
+</li>
+<li><p>TCC实现分布式事务</p>
+</li>
+<li><p>数据库事务、隔离级别和锁 <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/cb97f76a92fd" title="https://www.jianshu.com/p/cb97f76a92fd">参考链接</a></p>
+</li>
+<li><p>MVCC(Multi-Version Concurrency Control)</p>
+</li>
+</ul>
+</li>
+<li><p>聚簇索引和非聚簇索引</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weichi7549/article/details/107333380/" title="https://blog.csdn.net/weichi7549/article/details/107333380/">参考链接</a></li>
+</ul>
+</li>
+<li><p>主键为什么定义为自增？</p>
+<ul>
+<li>按主键顺序插入吗？</li>
+</ul>
+</li>
+<li><p>redis用作数据库数据缓存， 如何保证一致性？</p>
+</li>
+<li><p>Redis是一种单线程模型， 如何支持高并发请求</p>
+<ul>
+<li>NIO</li>
+</ul>
+</li>
+<li><p>Redis执行快的原因</p>
+</li>
+<li><p>消息队列</p>
+<ul>
+<li>有哪些产品： Rabbit MQ，Rocket MQ、Active MQ</li>
+<li>解决的哪些场景的问题, 分别具体介绍下<ul>
+<li>异步处理</li>
+<li>应用解耦</li>
+<li>流量消峰</li>
+<li>日志处理</li>
+<li>消息通讯</li>
+</ul>
+</li>
+<li>异步做， 用线程池异步有什么区别？</li>
+</ul>
+</li>
+<li><p>跨行转账怎么实现？</p>
+</li>
+<li><p>附加： 红黑树的增删改查过程模拟</p>
+</li>
+<li><p>Java的弱引用使用场景</p>
+</li>
+<li><p>ThreadLocal源码分析</p>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://qota.top">Never</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://qota.top/2019/01/20/%E7%BE%8E%E5%9B%A2APP%E7%94%A8%E6%88%B7%E5%A2%9E%E9%95%BF%E5%BC%80%E5%8F%91%E4%B8%80%E9%9D%A2/">https://qota.top/2019/01/20/%E7%BE%8E%E5%9B%A2APP%E7%94%A8%E6%88%B7%E5%A2%9E%E9%95%BF%E5%BC%80%E5%8F%91%E4%B8%80%E9%9D%A2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%9D%A2%E8%AF%95-%E7%BE%8E%E5%9B%A2-Java/">面试 美团 Java</a></div><div class="post_share"><div class="social-share" data-image="https://pic.zenvia.top/picgo/blog_avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2019/01/20/%E6%BB%B4%E6%BB%B4Java%E5%BC%80%E5%8F%91%E4%B8%80%E9%9D%A2/" title="滴滴Java开发一面"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">滴滴Java开发一面</div></div></a></div><div class="next-post pull-right"><a href="/2019/01/20/%E7%BE%8E%E5%9B%A2%E5%BF%AB%E9%A9%B4%E5%BC%80%E5%8F%91%E4%B8%80%E9%9D%A2/" title="美团快驴开发一面"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">美团快驴开发一面</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2019/01/20/%E7%BE%8E%E5%9B%A2%E5%BF%AB%E9%A9%B4%E5%BC%80%E5%8F%91%E4%B8%80%E9%9D%A2/" title="美团快驴开发一面"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-01-20</div><div class="title">美团快驴开发一面</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Never</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yeslsl/"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">My Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%BA%8C%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第二篇博客">我的第二篇博客</a><time datetime="2023-07-20T03:56:37.000Z" title="Created 2023-07-20 11:56:37">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第一篇博客">我的第一篇博客</a><time datetime="2023-07-20T03:51:40.000Z" title="Created 2023-07-20 11:51:40">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/13/%E5%A4%96%E8%AE%BE%E6%8E%A5%E5%8F%A3-%E5%8D%8F%E8%AE%AE-%E6%80%BB%E7%BA%BF/" title="外设接口-协议-总线">外设接口-协议-总线</a><time datetime="2021-12-12T16:00:00.000Z" title="Created 2021-12-13 00:00:00">2021-12-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/01/BlockingQueue%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/" title="BlockingQueue阻塞队列">BlockingQueue阻塞队列</a><time datetime="2021-11-30T16:00:00.000Z" title="Created 2021-12-01 00:00:00">2021-12-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/11/29/apache-cxf3_3_1%E9%9B%86%E6%88%90springboot2_1_3/" title="apache-cxf3_3_1集成springboot2_1_3">apache-cxf3_3_1集成springboot2_1_3</a><time datetime="2021-11-28T16:00:00.000Z" title="Created 2021-11-29 00:00:00">2021-11-29</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Never</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>滴滴Java开发一面 | Never</title><meta name="author" content="Never"><meta name="copyright" content="Never"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="我们为什么需要https， 比http好在哪？    http不足 窃听风险（eavesdropping）：通信使用明文， 内容可能被窃听； 冒充风险（pretending）：不验证通信方的身份， 因此有可能遭遇伪装； 篡改风险（tampering）：无法证明报文的完整性， 有可能已遭篡改。   https的优点 所以信息都是加密传播， 第三方无法窃听； 配备身份证书， 防止身份被冒充； 具有校">
+<meta property="og:type" content="article">
+<meta property="og:title" content="滴滴Java开发一面">
+<meta property="og:url" content="https://qota.top/2019/01/20/%E6%BB%B4%E6%BB%B4Java%E5%BC%80%E5%8F%91%E4%B8%80%E9%9D%A2/index.html">
+<meta property="og:site_name" content="Never">
+<meta property="og:description" content="我们为什么需要https， 比http好在哪？    http不足 窃听风险（eavesdropping）：通信使用明文， 内容可能被窃听； 冒充风险（pretending）：不验证通信方的身份， 因此有可能遭遇伪装； 篡改风险（tampering）：无法证明报文的完整性， 有可能已遭篡改。   https的优点 所以信息都是加密传播， 第三方无法窃听； 配备身份证书， 防止身份被冒充； 具有校">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://pic.zenvia.top/picgo/blog_avatar.png">
+<meta property="article:published_time" content="2019-01-19T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-07-25T04:50:07.529Z">
+<meta property="article:author" content="Never">
+<meta property="article:tag" content="面试 滴滴 Java HTTPS 二叉树 Redis 多线程 线程安全 双重检查锁 DCL Spring SpringBoot MySQL JVM 设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.zenvia.top/picgo/blog_avatar.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://qota.top/2019/01/20/%E6%BB%B4%E6%BB%B4Java%E5%BC%80%E5%8F%91%E4%B8%80%E9%9D%A2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '滴滴Java开发一面',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2023-07-25 12:50:07'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="Never"><span class="site-name">Never</span></a></span><div id="menus"><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">滴滴Java开发一面</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2019-01-19T16:00:00.000Z" title="Created 2019-01-20 00:00:00">2019-01-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-07-25T04:50:07.529Z" title="Updated 2023-07-25 12:50:07">2023-07-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="滴滴Java开发一面"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><ol>
+<li><p><strong>我们为什么需要https， 比http好在哪？</strong>  </p>
+<ul>
+<li>http不足<ul>
+<li>窃听风险（eavesdropping）：通信使用明文， 内容可能被窃听；</li>
+<li>冒充风险（pretending）：不验证通信方的身份， 因此有可能遭遇伪装；</li>
+<li>篡改风险（tampering）：无法证明报文的完整性， 有可能已遭篡改。</li>
+</ul>
+</li>
+<li>https的优点<ul>
+<li>所以信息都是加密传播， 第三方无法窃听；</li>
+<li>配备身份证书， 防止身份被冒充；</li>
+<li>具有校验机制， 一旦被篡改， 通信双方会立即发现。</li>
+</ul>
+</li>
+<li>https通信步骤: <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_33301113/article/details/78725960" title="https://blog.csdn.net/qq_33301113/article/details/78725960">参考链接</a><ul>
+<li>步骤1：客户端通过发送Client Hello报文开始SSL通信。报文中包含客户端支持的SSL的指定版本，加密组件列表；</li>
+<li>步骤2：服务器可进行SSL通信时，会以Server Hello报文作为应答。和客户端一样，在报文中包含SSL版本以及加密组件。服务器的加密组件内容是从接收到的客户端加密组件内筛选出来的；</li>
+<li>步骤3：之后服务器发送Certificate报文。报文中包含公开密钥证书；</li>
+<li>步骤4：最后服务器发送Server Hello Done报文通知客户端，最初阶段的SSL握手协商部分结束；</li>
+<li>步骤5：SSL第一次握手结束之后，客户端以Client Key Exchange报文作为回应；报文中包含通信加密中使用的一种被称为Pre-master secret的随机密码串。该报文已用步骤3中的公开密钥进行加密；</li>
+<li>步骤6：接着客户端继续发送Change Cipher Spec报文。该报文会提示服务器，在此报文之后的通信会采用Pre-master secret密钥加密；</li>
+<li>步骤7：客户端发送Finished报文。该报文包含连接至今全部报文的整体校验值。这次握手协商是否能够成功，要以服务器是否能够正确解密该报文作为判定标准；</li>
+<li>步骤8：服务器同样发送Change Cipher Spec报文；</li>
+<li>步骤9：服务器同样发送Finished报文；</li>
+<li>步骤10：服务器和客户端的Finished报文交换完毕之后，SSL连接就算建立完成。通信会受到SSL的保护。从此处开始进行应用层协议的通信，即发送HTTP请求；</li>
+<li>步骤11：应用层协议通信，即发送HTTP响应；</li>
+<li>步骤12：最后由客户端断开连接。断开连接时，发送close_notify报文。左图做了一些省略，这步之后再发送TCP FIN报文来关闭与TCP的通信.  </li>
+<li>以上流程中，应用层发送数据时会附加一种叫做MAC的报文摘要。MAC能够查知报文是否遭到篡改，从而保护报文的完整性；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>一道算法题</strong></p>
+<ul>
+<li>题目： 在计算机的磁盘里有一个根目录， 比如叫<em><strong>姓名</strong></em>, 在这个目录下会有若干个子目录， 比如<strong>毕业学校、就职公司、爱好</strong>， 在这每个子目录下还可能有若干目录， 比如在毕业院校下有<strong>清华大学</strong>， 爱好下边有<strong>台球、篮球…</strong> 求当前状态下的目录最大深度。</li>
+<li>附加条件： 给你提供一个获取文件列表的方法， <code>File.getFileList();</code></li>
+<li>分析： 此题是二叉树求最大深度的变种， 即：多叉树求最大深度。</li>
+<li>代码：    <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getDepth</span><span class="params">(File file)</span> &#123;</span><br><span class="line">   List&lt;File&gt; list = file.getFileList();</span><br><span class="line">   <span class="keyword">if</span> (list.size() == <span class="number">0</span>) &#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="type">int</span> <span class="variable">max</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">   <span class="keyword">for</span> (File f : list) &#123;</span><br><span class="line">       max = Math.max(max, getDepth(f));</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> max + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>一提到Redis, 就会被想到的NB特性</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/bird73/article/details/79792548">Redis面试题</a></li>
+</ul>
+</li>
+<li><p><strong>知道Redis的跳表吗？</strong></p>
+</li>
+<li><p><strong>Redis只有一个线程吗？</strong></p>
+</li>
+<li><p><strong>实现一个线程安全的单例模式</strong></p>
+<ul>
+<li><p><strong>加锁（效率不高）</strong></p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Singleton2 <span class="title function_">getInstance2</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (Singleton2.class) &#123;</span><br><span class="line">            <span class="comment">//双重检查防止singleton在多线程的情况下占用多个空间</span></span><br><span class="line">            <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">                instance = <span class="keyword">new</span> <span class="title class_">Singleton2</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>利用classloader加载机制，避免线程同步问题</strong></p>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton3</span> &#123;</span><br><span class="line">    <span class="comment">// 此处设置为私有， 不允许new</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton3</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//此处写成final， 是为了防止动态赋值修改</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Singleton3</span> <span class="variable">INSTANCE</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Singleton3</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton3 <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>上一种的变种， 使用静态代码块</strong></p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton4</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton4</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Singleton4</span> <span class="variable">instance</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        instance = <span class="keyword">new</span> <span class="title class_">Singleton4</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton4 <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>静态内部类</strong>    </p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment">* 静态内部类</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* 这种方式同样利用了classloader的机制来保证初始化instance时只有一个线程，</span></span><br><span class="line"><span class="comment">* 它跟第三种和第四种方式不同的是（很细微的差别）：Singleton3和Singleton4方式是只要</span></span><br><span class="line"><span class="comment">* Singleton类被装载了，那么instance就会被实例化（没有达到lazy loading</span></span><br><span class="line"><span class="comment">* 效果），而这种方式是Singleton类被装载了，instance不一定被初始化。因为</span></span><br><span class="line"><span class="comment">* SingletonHolder类没有被主动使用，只有显示通过调用getInstance方法时，</span></span><br><span class="line"><span class="comment">* 才会显示装载SingletonHolder类，从而实例化instance。想象一下，如果实例</span></span><br><span class="line"><span class="comment">* 化instance很消耗资源，我想让他延迟加载，另外一方面，我不希望在Singleton</span></span><br><span class="line"><span class="comment">* 类加载时就实例化，因为我不能确保Singleton类还可能在其他的地方被主动使用从</span></span><br><span class="line"><span class="comment">* 而被加载，那么这个时候实例化instance显然是不合适的。这个时候，这种方式相比</span></span><br><span class="line"><span class="comment">* 第三和第四种方式就显得很合理。   </span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton5</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton5</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">SingletonHolder</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Singleton5</span> <span class="variable">INSTANCE</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Singleton5</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton5 <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonHolder.INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>继承Enum&lt;T&gt;或者定义为enum类型，其他的定义跟普通类相同</strong></p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">EnumSingleton</span> &#123;</span><br><span class="line">INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">whateverMothodYouNeed</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>双重检查锁:</strong> <a target="_blank" rel="noopener" href="https://www.cnblogs.com/xz816111/p/8470048.html" title="https://www.cnblogs.com/xz816111/p/8470048.html">参考链接</a> <a target="_blank" rel="noopener" href="https://blog.csdn.net/u013837825/article/details/106004879/">参考链接2</a></p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 执行双重检查是因为，如果多个线程同时了通过了第一次检查，并且其中一个线程首先通过了第二次检查并实例化了对象，那么剩余通过了第一次检查的线程就不会再去实例化对象。  </span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Singleton7</span> &#123;</span><br><span class="line">    <span class="comment">// 此处将instance设置为volatile的目的是防止指令重排序</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton7 instance;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Singleton7</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton7 <span class="title function_">getInstance</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 检查变量是否被初始化(不去获得锁)，如果已被初始化则立即返回。</span></span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 获取锁。</span></span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton7.class) &#123;</span><br><span class="line">                <span class="comment">// 再次检查变量是否已经被初始化，如果还没被初始化就初始化一个对象。</span></span><br><span class="line">                <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">                    instance = <span class="keyword">new</span> <span class="title class_">Singleton7</span>();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 有人说return应该写在同步块中， 写法如下：</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Singleton7 <span class="title function_">getInstance2</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 检查变量是否被初始化(不去获得锁)，如果已被初始化则立即返回。</span></span><br><span class="line">        <span class="keyword">if</span> (instance != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> instance;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 获取锁。</span></span><br><span class="line">        <span class="keyword">synchronized</span> (Singleton7.class) &#123;</span><br><span class="line">            <span class="comment">// 再次检查变量是否已经被初始化，如果还没被初始化就初始化一个对象。</span></span><br><span class="line">            <span class="keyword">if</span> (instance == <span class="literal">null</span>) &#123;</span><br><span class="line">                instance = <span class="keyword">new</span> <span class="title class_">Singleton7</span>();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> instance;<span class="comment">//return from here</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>jvm内存管理 垃圾回收 是否监控过公司项目的gc信息</strong></p>
+</li>
+<li><p><strong>多线程问题</strong></p>
+<ul>
+<li>题目： 有a和b两个线程， 如何实现交替打印a、b、a、b…</li>
+<li>方法一：  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MultiThreadPrintAB</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> <span class="type">boolean</span> <span class="variable">nowA</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (nowA) &#123;</span><br><span class="line">                    System.out.print(<span class="string">&quot;A&quot;</span>);</span><br><span class="line">                    nowA = <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="type">Thread</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!nowA) &#123;</span><br><span class="line">                    System.out.print(<span class="string">&quot;B&quot;</span>);</span><br><span class="line">                    nowA = <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        a.start();</span><br><span class="line">        b.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>你知道线程的哪些方法， 怎么用？</strong>    </p>
+</li>
+<li><p><strong>让你实现一个线程池， 你怎么设计？ 需要考虑哪些问题？</strong></p>
+<ul>
+<li>让用户实现拒绝策略</li>
+<li>…</li>
+</ul>
+</li>
+<li><p><strong>spring用到的设计模式可以借鉴的</strong></p>
+</li>
+<li><p><strong>spring的单例模式的好处</strong></p>
+</li>
+<li><p><strong>谈谈SpringBoot的理解</strong></p>
+<ul>
+<li>约定大于配置</li>
+<li>…</li>
+</ul>
+</li>
+<li><p><strong>JVM参数调优</strong></p>
+</li>
+<li><p><strong>MySQL</strong></p>
+<ul>
+<li>介绍下MySQL的存储引擎</li>
+<li>innoDB存储引擎使用的数据结构及优点？<ul>
+<li>数据结构： B+ tree</li>
+<li>优点：<ul>
+<li>…</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>你最擅长什么， 咱就问什么</strong></p>
+</li>
+<li><p><strong>你为什么选择了目前这家公司</strong></p>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://qota.top">Never</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://qota.top/2019/01/20/%E6%BB%B4%E6%BB%B4Java%E5%BC%80%E5%8F%91%E4%B8%80%E9%9D%A2/">https://qota.top/2019/01/20/%E6%BB%B4%E6%BB%B4Java%E5%BC%80%E5%8F%91%E4%B8%80%E9%9D%A2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%9D%A2%E8%AF%95-%E6%BB%B4%E6%BB%B4-Java-HTTPS-%E4%BA%8C%E5%8F%89%E6%A0%91-Redis-%E5%A4%9A%E7%BA%BF%E7%A8%8B-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8-%E5%8F%8C%E9%87%8D%E6%A3%80%E6%9F%A5%E9%94%81-DCL-Spring-SpringBoot-MySQL-JVM-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">面试 滴滴 Java HTTPS 二叉树 Redis 多线程 线程安全 双重检查锁 DCL Spring SpringBoot MySQL JVM 设计模式</a></div><div class="post_share"><div class="social-share" data-image="https://pic.zenvia.top/picgo/blog_avatar.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2019/01/20/redis%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0/" title="redis命令使用笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">redis命令使用笔记</div></div></a></div><div class="next-post pull-right"><a href="/2019/01/20/%E7%BE%8E%E5%9B%A2APP%E7%94%A8%E6%88%B7%E5%A2%9E%E9%95%BF%E5%BC%80%E5%8F%91%E4%B8%80%E9%9D%A2/" title="美团APP用户增长开发一面"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">美团APP用户增长开发一面</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://pic.zenvia.top/picgo/blog_avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Never</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">62</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yeslsl/"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">My Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%BA%8C%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第二篇博客">我的第二篇博客</a><time datetime="2023-07-20T03:56:37.000Z" title="Created 2023-07-20 11:56:37">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/07/20/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" title="我的第一篇博客">我的第一篇博客</a><time datetime="2023-07-20T03:51:40.000Z" title="Created 2023-07-20 11:51:40">2023-07-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/13/%E5%A4%96%E8%AE%BE%E6%8E%A5%E5%8F%A3-%E5%8D%8F%E8%AE%AE-%E6%80%BB%E7%BA%BF/" title="外设接口-协议-总线">外设接口-协议-总线</a><time datetime="2021-12-12T16:00:00.000Z" title="Created 2021-12-13 00:00:00">2021-12-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/12/01/BlockingQueue%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97/" title="BlockingQueue阻塞队列">BlockingQueue阻塞队列</a><time datetime="2021-11-30T16:00:00.000Z" title="Created 2021-12-01 00:00:00">2021-12-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2021/11/29/apache-cxf3_3_1%E9%9B%86%E6%88%90springboot2_1_3/" title="apache-cxf3_3_1集成springboot2_1_3">apache-cxf3_3_1集成springboot2_1_3</a><time datetime="2021-11-28T16:00:00.000Z" title="Created 2021-11-29 00:00:00">2021-11-29</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Never</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
